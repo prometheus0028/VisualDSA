@@ -10,7 +10,10 @@ export default function ChatSidebar({
   const navigate = useNavigate();
 
   const deleteChatAPI = async (chatId) => {
-    const res = await fetch(`http://localhost:5000/api/tutor/chat/${chatId}`, {
+    const API = import.meta.env.VITE_API_URL; // ✅ added
+
+    const res = await fetch(`${API}/api/tutor/chat/${chatId}`, {
+      // ✅ fixed
       method: 'DELETE',
     });
 
