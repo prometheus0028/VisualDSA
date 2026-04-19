@@ -157,14 +157,24 @@ export const deleteChat = async (req, res) => {
   const { id } = req.params;
 
   try {
-    // ✅ correct table (your actual schema)
-    const { error } = await supabase.from('chat_history').delete().eq('id', id);
+    console.log('Deleting chat id:', id);
 
-    if (error) throw error;
+    const { data, error } = await supabase
+      .from('chat_history')
+      .delete()
+      .eq('id', String(id))
+      .select();
 
-    res.json({ success: true });
+    if (error) {
+      console.error('❌ Supabase error:', error);
+      return res.status(500).json({ error: error.message });
+    }
+
+    console.log('Deleted:', data);
+
+    res.json({ success: true, deleted: data });
   } catch (err) {
-    console.error('Delete chat error:', err);
+    console.error('❌ FULL DELETE ERROR:', err);
     res.status(500).json({ error: 'Delete failed' });
   }
 };
