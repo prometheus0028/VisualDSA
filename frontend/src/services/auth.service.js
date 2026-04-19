@@ -5,7 +5,7 @@ const API = import.meta.env.VITE_API_URL;
 fetch(`${API}/api/auth`);
 
 export const signup = async (email, password, name) => {
-  const res = await axios.post(`${API}/signup`, {
+  const res = await axios.post(`${API}/api/auth/signup`, {
     email,
     password,
     name, // 🔥 ADD THIS
@@ -14,7 +14,7 @@ export const signup = async (email, password, name) => {
 };
 
 export const login = async (email, password) => {
-  const res = await axios.post(`${API}/login`, { email, password });
+  const res = await axios.post(`${API}/api/auth/login`, { email, password });
   return res.data;
 };
 

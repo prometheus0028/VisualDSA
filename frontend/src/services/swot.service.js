@@ -8,7 +8,7 @@ export const getAISwot = async (user_id) => {
   try {
     if (!user_id) return null;
 
-    const res = await axios.post(API, { user_id });
+    const res = await axios.post(`${API}/api/swot`, { user_id });
 
     // 🔥 backend may return cached OR fresh OR empty
     if (res.data?.empty) {
@@ -50,7 +50,7 @@ export const getSwotHistory = async (user_id) => {
   try {
     if (!user_id) return [];
 
-    const res = await axios.get(`${API}/history`, {
+    const res = await axios.get(`${API}/api/swot/history`, {
       params: { user_id },
     });
 

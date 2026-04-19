@@ -5,7 +5,7 @@ fetch(`${API}/api/analysis`);
 
 // 🔥 GET TOPIC ANALYSIS
 export const getTopicAnalysis = async (user_id) => {
-  const res = await axios.get(`${API}`, {
+  const res = await axios.get(`${API}/api/analysis`, {
     params: { user_id },
   });
   return res.data;

@@ -14,7 +14,7 @@ export const submitTest = async ({
   wrongQuestions = [],
 }) => {
   try {
-    const res = await axios.post(`${BASE_URL}/test/submit`, {
+    const res = await axios.post(`${BASE_URL}/api/test/submit`, {
       user_id,
       topic,
       score,

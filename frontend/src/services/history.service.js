@@ -12,7 +12,7 @@ export const saveTestResult = async ({
   correct,
 }) => {
   try {
-    const res = await axios.post(`${API}/save`, {
+    const res = await axios.post(`${API}/api/history/save`, {
       user_id,
       topic: topic || 'General',
       score: score || 0,
@@ -32,7 +32,7 @@ export const getTestHistory = async (user_id) => {
   try {
     if (!user_id) return [];
 
-    const res = await axios.get(`${API}`, {
+    const res = await axios.get(`${API}/api/history`, {
       params: { user_id },
     });
 

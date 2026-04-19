@@ -20,8 +20,29 @@ import testRoutes from './routes/test.routes.js';
 
 const app = express();
 
+// ================= CORS CONFIG (UPDATED) =================
+const allowedOrigins = [
+  'http://localhost:5173',
+  process.env.FRONTEND_URL, // 🔥 from Render env
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // allow requests with no origin (like Postman)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+  }),
+);
+
 // ================= MIDDLEWARE =================
-app.use(cors());
 app.use(express.json());
 
 // ================= ROUTES =================
