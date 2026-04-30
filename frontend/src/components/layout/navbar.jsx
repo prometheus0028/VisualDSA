@@ -114,7 +114,7 @@ export default function Navbar() {
             {/* THEME */}
             <button
               onClick={toggleTheme}
-              className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-green-600 text-white text-xs sm:text-sm whitespace-nowrap dark:bg-white dark:text-black"
+              className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-green-600 text-white text-xs sm:text-sm whitespace-nowrap "
             >
               {theme === 'dark' ? 'Light' : 'Dark'}
             </button>
