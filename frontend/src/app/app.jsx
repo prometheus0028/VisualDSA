@@ -1,4 +1,5 @@
-/* eslint-disable react-hooks/immutability */
+/* eslint-disable no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from 'react';
 import Router from './router';
 import { Toaster } from 'react-hot-toast';
@@ -6,58 +7,32 @@ import { supabase } from '../services/supabase';
 import { useAuthStore } from '../store/auth.store';
 
 export default function App() {
-  const setAuth = useAuthStore((state) => state.setAuth);
+  const initAuth = useAuthStore((state) => state.initAuth);
+  const user = useAuthStore((state) => state.user);
 
+  // ================= INIT AUTH (ONLY ONCE) =================
   useEffect(() => {
-    // 🔥 LOAD SESSION ON START
-    const loadSession = async () => {
-      const { data } = await supabase.auth.getSession();
+    initAuth();
+  }, []);
 
-      console.log('SESSION:', data.session);
+  // ================= ENSURE PROFILE =================
+  useEffect(() => {
+    if (!user) return;
 
-      if (data?.session) {
-        setAuth(data.session);
+    ensureProfile(user);
+  }, [user]);
 
-        // 🔥 ensure profile exists
-        await ensureProfile(data.session);
-      } else {
-        // 🔥 IMPORTANT: stop loading even if no session
-        setAuth(null);
-      }
-    };
-
-    loadSession();
-
-    // 🔥 LISTEN FOR AUTH EVENTS
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('AUTH EVENT:', event, session);
-
-      setAuth(session);
-
-      if (event === 'SIGNED_IN' && session?.user) {
-        await ensureProfile(session);
-      }
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [setAuth]);
-
-  // 🔥 FUNCTION: ENSURE PROFILE EXISTS
-  const ensureProfile = async (session) => {
+  const ensureProfile = async (user) => {
     try {
-      const user = session.user;
-
       const name =
         user.user_metadata?.name ||
         user.user_metadata?.full_name ||
         user.email?.split('@')[0] ||
         'User';
 
-      await fetch('http://localhost:5000/api/user/ensure', {
+      const API = import.meta.env.VITE_API_URL;
+
+      await fetch(`${API}/api/user/ensure`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
