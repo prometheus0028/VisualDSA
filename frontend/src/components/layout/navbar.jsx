@@ -28,9 +28,9 @@ export default function Navbar() {
     setDropdownOpen(false);
   };
 
-  // 🔥 FIXED SCROLL NAVIGATION (100% reliable)
   const scrollToSection = (id) => {
     setMobileOpen(false);
+    setDropdownOpen(false);
 
     if (location.pathname !== '/') {
       navigate('/', { state: { scrollTo: id } });
@@ -40,7 +40,6 @@ export default function Navbar() {
     }
   };
 
-  // 🔥 HANDLE CLICK OUTSIDE
   useEffect(() => {
     const handleClick = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -52,7 +51,6 @@ export default function Navbar() {
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
-  // 🔥 LOGIN MODAL EVENT
   useEffect(() => {
     const openLogin = () => setAuthOpen(true);
     window.addEventListener('open_login_modal', openLogin);
@@ -69,8 +67,8 @@ export default function Navbar() {
   return (
     <>
       <div className="fixed top-4 sm:top-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-7xl px-3 sm:px-4 md:px-6">
-        <div className="flex items-center justify-between gap-2 sm:gap-4 px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 rounded-2xl backdrop-blur-2xl bg-white/60 dark:bg-black/60 border border-white/20 dark:border-white/10 shadow-xl dark:shadow-none">
-          {/*  LOGO*/}
+        <div className="flex items-center justify-between gap-2 sm:gap-4 px-4 sm:px-6 md:px-8 py-3 rounded-2xl backdrop-blur-2xl bg-white/60 dark:bg-black/60 border border-white/20 dark:border-white/10 shadow-xl">
+          {/* LOGO */}
           <Link
             to="/"
             className="text-sm sm:text-lg md:text-xl font-bold text-blue-500 whitespace-nowrap"
@@ -79,37 +77,21 @@ export default function Navbar() {
           </Link>
 
           {/* DESKTOP NAV */}
-          <div className="hidden md:flex items-center gap-6 lg:gap-8 text-sm font-medium">
-            <button
-              onClick={() => scrollToSection('features')}
-              className="text-black dark:text-white hover:opacity-70"
-            >
+          <div className="hidden md:flex items-center gap-6 text-sm font-medium">
+            <button onClick={() => scrollToSection('features')}>
               Features
             </button>
-            <button
-              onClick={() => scrollToSection('how')}
-              className="text-black dark:text-white hover:opacity-70"
-            >
-              How It Works
-            </button>
-            <button
-              onClick={() => scrollToSection('about')}
-              className="text-black dark:text-white hover:opacity-70"
-            >
-              About
-            </button>
-            <button
-              onClick={() => scrollToSection('faq')}
-              className="text-black dark:text-white hover:opacity-70"
-            >
-              FAQ
-            </button>
+            <button onClick={() => scrollToSection('how')}>How It Works</button>
+            <button onClick={() => scrollToSection('about')}>About</button>
+            <button onClick={() => scrollToSection('faq')}>FAQ</button>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
+          {/* RIGHT */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* THEME */}
             <button
               onClick={toggleTheme}
-              className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-green-600 text-white text-xs sm:text-sm whitespace-nowrap dark:bg-white dark:text-black"
+              className="px-3 py-1.5 rounded-lg bg-green-600 text-white text-xs sm:text-sm dark:bg-white dark:text-black"
             >
               {theme === 'dark' ? 'Light' : 'Dark'}
             </button>
@@ -118,37 +100,58 @@ export default function Navbar() {
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-semibold text-xs sm:text-sm"
+                  className="w-9 h-9 rounded-full bg-blue-500 text-white flex items-center justify-center font-semibold text-xs"
                 >
                   {firstLetter}
                 </button>
 
                 {dropdownOpen && (
-                  <div className="absolute right-0 mt-2 sm:mt-3 w-56 sm:w-64 rounded-2xl backdrop-blur-2xl bg-white/80 dark:bg-black/80 border border-white/20 dark:border-white/10 shadow-xl p-3 sm:p-4 text-sm">
-                    <div className="mb-3">
-                      <p className="text-gray-500 dark:text-gray-300 text-xs">
-                        Welcome
-                      </p>
-                      <p className="text-gray-800 dark:text-gray-300 font-semibold truncate">
-                        {name}
-                      </p>
+                  <div className="absolute right-0 mt-3 w-56 rounded-2xl backdrop-blur-2xl bg-white/80 dark:bg-black/80 border shadow-xl p-4 text-sm">
+                    {/* MOBILE NAV INSIDE DROPDOWN */}
+                    <div className="md:hidden mb-2">
+                      <button
+                        onClick={() => scrollToSection('features')}
+                        className="block w-full text-left py-2"
+                      >
+                        Features
+                      </button>
+                      <button
+                        onClick={() => scrollToSection('how')}
+                        className="block w-full text-left py-2"
+                      >
+                        How It Works
+                      </button>
+                      <button
+                        onClick={() => scrollToSection('about')}
+                        className="block w-full text-left py-2"
+                      >
+                        About
+                      </button>
+                      <button
+                        onClick={() => scrollToSection('faq')}
+                        className="block w-full text-left py-2"
+                      >
+                        FAQ
+                      </button>
+
+                      <div className="border-t my-2"></div>
                     </div>
 
-                    <div className="border-t border-gray-200 dark:border-white/10 my-2"></div>
+                    <p className="font-semibold mb-2">{name}</p>
 
                     <button
                       onClick={() => {
                         navigate('/dashboard');
                         setDropdownOpen(false);
                       }}
-                      className="w-full text-left px-3 py-2 rounded-lg text-gray-800 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 transition"
+                      className="block w-full text-left py-2"
                     >
                       Dashboard
                     </button>
 
                     <button
                       onClick={handleLogout}
-                      className="w-full text-left px-3 py-2 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition"
+                      className="block w-full text-left py-2 text-red-500"
                     >
                       Logout
                     </button>
@@ -156,53 +159,38 @@ export default function Navbar() {
                 )}
               </div>
             ) : (
-              <button
-                onClick={() => setAuthOpen(true)}
-                className="px-3 sm:px-5 py-1.5 sm:py-2 rounded-lg border border-black dark:border-white text-xs sm:text-sm text-black dark:text-white whitespace-nowrap"
-              >
-                Login / Signup
-              </button>
-            )}
+              <>
+                {/* LOGIN BUTTON */}
+                <button
+                  onClick={() => setAuthOpen(true)}
+                  className="px-3 sm:px-5 py-1.5 sm:py-2 rounded-lg border text-xs sm:text-sm text-black dark:text-white"
+                >
+                  Login
+                </button>
 
-            {/*  HAMBURGER */}
-            <button
-              onClick={() => setMobileOpen(!mobileOpen)}
-              className="md:hidden flex flex-col gap-1 ml-1"
-            >
-              <span className="w-5 h-[2px] bg-black dark:bg-white"></span>
-              <span className="w-5 h-[2px] bg-black dark:bg-white"></span>
-              <span className="w-5 h-[2px] bg-black dark:bg-white"></span>
-            </button>
+                {/* HAMBURGER ONLY WHEN NOT LOGGED IN */}
+                <button
+                  onClick={() => setMobileOpen(!mobileOpen)}
+                  className="md:hidden flex flex-col gap-1 ml-1"
+                >
+                  <span className="w-5 h-[2px] bg-black dark:bg-white"></span>
+                  <span className="w-5 h-[2px] bg-black dark:bg-white"></span>
+                  <span className="w-5 h-[2px] bg-black dark:bg-white"></span>
+                </button>
+              </>
+            )}
           </div>
         </div>
 
-        {/*  MOBILE MENU */}
-        {mobileOpen && (
+        {/* MOBILE MENU (ONLY NOT LOGGED IN) */}
+        {!user && mobileOpen && (
           <div className="mt-3 rounded-2xl backdrop-blur-2xl bg-white/80 dark:bg-black/80 border shadow-xl p-5 flex flex-col gap-4 text-sm md:hidden">
-            <button
-              onClick={() => scrollToSection('features')}
-              className="text-black dark:text-white"
-            >
+            <button onClick={() => scrollToSection('features')}>
               Features
             </button>
-            <button
-              onClick={() => scrollToSection('how')}
-              className="text-black dark:text-white"
-            >
-              How It Works
-            </button>
-            <button
-              onClick={() => scrollToSection('about')}
-              className="text-black dark:text-white"
-            >
-              About
-            </button>
-            <button
-              onClick={() => scrollToSection('faq')}
-              className="text-black dark:text-white"
-            >
-              FAQ
-            </button>
+            <button onClick={() => scrollToSection('how')}>How It Works</button>
+            <button onClick={() => scrollToSection('about')}>About</button>
+            <button onClick={() => scrollToSection('faq')}>FAQ</button>
           </div>
         )}
       </div>
