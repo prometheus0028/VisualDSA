@@ -28,7 +28,7 @@ export default function Footer() {
             </p>
 
             {/* 🔥 MADE BY */}
-            <p className="text-sm">made by sarthak with love &lt;3</p>
+            <p className="text-sm">made with love &lt;3 by sarthak</p>
 
             {/* ================= SOCIALS ================= */}
             <div>
