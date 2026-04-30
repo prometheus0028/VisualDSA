@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import Lottie from 'lottie-react';
@@ -104,12 +103,23 @@ function SectionLayout({
       text-center md:text-left
     "
     >
-      {/* 🔥 MOBILE IMAGE FIRST ALWAYS */}
-      <div className="order-1 md:order-none flex justify-center">{image}</div>
+      {/* ================= IMAGE ================= */}
+      <div
+        className={`
+          flex justify-center
+          order-1
+          ${reverse ? 'md:order-1' : 'md:order-2'}
+        `}
+      >
+        {image}
+      </div>
 
-      {/* TEXT */}
+      {/* ================= TEXT ================= */}
       <motion.div
-        className="order-2 md:order-none"
+        className={`
+          order-2
+          ${reverse ? 'md:order-2' : 'md:order-1'}
+        `}
         initial={{ opacity: 0, y: 60, scale: 0.95 }}
         whileInView={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.8 }}
