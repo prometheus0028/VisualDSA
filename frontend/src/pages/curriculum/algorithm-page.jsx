@@ -2,23 +2,19 @@ import { useParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import { curriculumData } from '../../data/curriculum-data';
 import AlgorithmFrame from '../../components/algorithm/algorithm-frame';
-import { useAuthStore } from '../../store/auth.store'; // ✅ NEW
-import { trackActivity } from '../../services/activity.service'; // ✅ NEW
+import { useAuthStore } from '../../store/auth.store';
+import { trackActivity } from '../../services/activity.service';
 
 export default function AlgorithmPage() {
   const { categoryId, algoId } = useParams();
-  const { user } = useAuthStore(); // ✅ NEW
+  const { user } = useAuthStore();
 
-  // ===============================
-  // SCROLL TO TOP (FIX)
-  // ===============================
+  // ================= SCROLL FIX =================
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [categoryId, algoId]);
 
-  // ===============================
-  // 🔥 TRACK CURRICULUM VIEW (ONCE)
-  // ===============================
+  // ================= TRACK =================
   useEffect(() => {
     if (!user) return;
 
@@ -26,23 +22,23 @@ export default function AlgorithmPage() {
     const visited = sessionStorage.getItem(key);
 
     if (!visited) {
-      trackActivity(user.id, 'curriculum'); // 🔥 ADDED
+      trackActivity(user.id, 'curriculum');
       sessionStorage.setItem(key, 'true');
     }
   }, [algoId, user]);
 
-  // ===============================
-  // FIND CATEGORY
-  // ===============================
+  // ================= FIND CATEGORY =================
   const category = curriculumData.find((c) => c.id === categoryId);
 
   if (!category) {
-    return <div className="pt-40 text-center">Category not found</div>;
+    return (
+      <div className="pt-28 sm:pt-36 md:pt-40 text-center px-4">
+        Category not found
+      </div>
+    );
   }
 
-  // ===============================
-  // FIND ALGORITHM
-  // ===============================
+  // ================= FIND ALGO =================
   let algorithm = null;
 
   if (category.algorithms) {
@@ -60,8 +56,16 @@ export default function AlgorithmPage() {
   }
 
   if (!algorithm) {
-    return <div className="pt-40 text-center">Algorithm not found</div>;
+    return (
+      <div className="pt-28 sm:pt-36 md:pt-40 text-center px-4">
+        Algorithm not found
+      </div>
+    );
   }
 
-  return <AlgorithmFrame algorithm={algorithm} />;
+  return (
+    <div className="min-h-screen overflow-x-hidden">
+      <AlgorithmFrame algorithm={algorithm} />
+    </div>
+  );
 }

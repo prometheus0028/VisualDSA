@@ -5,15 +5,27 @@ export default function MessageList({ messages }) {
   const bottomRef = useRef();
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    bottomRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'end',
+    });
   }, [messages]);
 
   return (
-    <div className="space-y-4">
+    <div
+      className="
+        w-full
+        max-w-3xl
+        mx-auto
+        px-3 sm:px-6
+        space-y-5
+      "
+    >
       {messages.map((msg, i) => (
         <MessageBubble key={i} message={msg} />
       ))}
 
+      {/* SCROLL ANCHOR */}
       <div ref={bottomRef} />
     </div>
   );

@@ -42,7 +42,6 @@ export default function Navbar() {
     }
   };
 
-  // 🔥 close dropdown on outside click
   useEffect(() => {
     const handleClick = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -54,7 +53,6 @@ export default function Navbar() {
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
-  // 🔥 LOGIN MODAL TRIGGER LISTENER (ADDED)
   useEffect(() => {
     const openLogin = () => {
       setAuthOpen(true);
@@ -67,7 +65,6 @@ export default function Navbar() {
     };
   }, []);
 
-  // 🔥 user name + first letter
   const name =
     user?.user_metadata?.name || user?.email?.split('@')[0] || 'User';
 
@@ -76,16 +73,20 @@ export default function Navbar() {
 
   return (
     <>
-      <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-7xl px-6">
-        <div className="flex items-center justify-between px-8 py-4 rounded-2xl backdrop-blur-2xl bg-white/60 dark:bg-black/60 border border-white/20 dark:border-white/10 shadow-xl dark:shadow-none">
+      {/* 🔥 OUTER WRAPPER FIX */}
+      <div className="fixed top-4 sm:top-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-7xl px-3 sm:px-4 md:px-6">
+        {/* 🔥 NAV CONTAINER FIX */}
+        <div className="flex items-center justify-between gap-2 sm:gap-4 px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 rounded-2xl backdrop-blur-2xl bg-white/60 dark:bg-black/60 border border-white/20 dark:border-white/10 shadow-xl dark:shadow-none">
+          {/* 🔥 LOGO RESPONSIVE */}
           <Link
             to="/"
-            className="text-xl font-bold bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 bg-clip-text text-transparent"
+            className="text-sm sm:text-lg md:text-xl font-bold bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 bg-clip-text text-transparent whitespace-nowrap"
           >
             VisualDSA
           </Link>
 
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium">
+          {/* 🔥 NAV LINKS */}
+          <div className="hidden md:flex items-center gap-6 lg:gap-8 text-sm font-medium">
             <button
               onClick={() => scrollToSection('features')}
               className="text-black dark:text-white hover:opacity-70"
@@ -112,40 +113,40 @@ export default function Navbar() {
             </button>
           </div>
 
-          <div className="flex items-center gap-4">
+          {/* 🔥 RIGHT SECTION FIX */}
+          <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
+            {/* 🔥 THEME BUTTON FIX */}
             <button
               onClick={toggleTheme}
-              className="px-4 py-2 rounded-lg bg-green-600 text-white text-sm"
+              className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-green-600 text-white text-xs sm:text-sm whitespace-nowrap"
             >
               {theme === 'dark' ? 'Light' : 'Dark'}
             </button>
 
             {user ? (
               <div className="relative" ref={dropdownRef}>
-                {/* 🔵 Avatar */}
+                {/* 🔥 AVATAR FIX */}
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-semibold"
+                  className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-semibold text-xs sm:text-sm"
                 >
                   {firstLetter}
                 </button>
 
-                {/* 🔽 Dropdown */}
+                {/* 🔥 DROPDOWN FIX */}
                 {dropdownOpen && (
-                  <div className="absolute right-0 mt-3 w-64 rounded-2xl backdrop-blur-2xl bg-white/80 dark:bg-black/80 border border-white/20 dark:border-white/10 shadow-xl p-4 text-sm">
-                    {/* Welcome */}
+                  <div className="absolute right-0 mt-2 sm:mt-3 w-56 sm:w-64 rounded-2xl backdrop-blur-2xl bg-white/80 dark:bg-black/80 border border-white/20 dark:border-white/10 shadow-xl p-3 sm:p-4 text-sm">
                     <div className="mb-3">
                       <p className="text-gray-500 dark:text-gray-300 text-xs">
                         Welcome
                       </p>
-                      <p className="text-gray-800 dark:text-gray-300 font-semibold">
+                      <p className="text-gray-800 dark:text-gray-300 font-semibold truncate">
                         {name}
                       </p>
                     </div>
 
                     <div className="border-t border-gray-200 dark:border-white/10 my-2"></div>
 
-                    {/* Dashboard */}
                     <button
                       onClick={() => {
                         navigate('/dashboard');
@@ -156,7 +157,6 @@ export default function Navbar() {
                       Dashboard
                     </button>
 
-                    {/* Logout */}
                     <button
                       onClick={handleLogout}
                       className="w-full text-left px-3 py-2 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition"
@@ -169,7 +169,7 @@ export default function Navbar() {
             ) : (
               <button
                 onClick={() => setAuthOpen(true)}
-                className="px-5 py-2 rounded-lg border border-black dark:border-white text-sm text-black dark:text-white"
+                className="px-3 sm:px-5 py-1.5 sm:py-2 rounded-lg border border-black dark:border-white text-xs sm:text-sm text-black dark:text-white whitespace-nowrap"
               >
                 Login / Signup
               </button>

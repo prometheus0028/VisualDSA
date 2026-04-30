@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useState } from 'react';
 
 export default function QuestionCard({
@@ -10,7 +9,6 @@ export default function QuestionCard({
 }) {
   const [localAnswers, setLocalAnswers] = useState([]);
 
-  // ================= RESET =================
   useEffect(() => {
     if (section === 'debug' && question?.blanks) {
       setLocalAnswers(new Array(question.blanks.length).fill(''));
@@ -25,38 +23,38 @@ export default function QuestionCard({
     setAnswer(updated);
   };
 
-  // ================= CLEAN MCQ TEXT =================
   const cleanMCQText = (text) => {
     if (!text) return '';
 
     return text
       .split('\n')
-      .filter((line) => !line.includes('console.log')) // remove console.log
+      .filter((line) => !line.includes('console.log'))
       .join('\n');
   };
 
   return (
-    <div className="p-8 rounded-3xl bg-white/60 dark:bg-white/5 backdrop-blur-xl border space-y-6 max-w-full overflow-hidden">
-      <h2 className="text-xl font-semibold">
+    <div className="p-5 sm:p-6 md:p-8 rounded-3xl bg-white/60 dark:bg-white/5 backdrop-blur-xl border space-y-5 sm:space-y-6 max-w-full overflow-hidden">
+      {/* TITLE */}
+      <h2 className="text-base sm:text-lg md:text-xl font-semibold">
         {section.toUpperCase()} Question {index + 1}
       </h2>
 
       {/* ================= MCQ ================= */}
       {section === 'mcq' && question && (
         <>
-          {/* 🔥 SCROLLABLE MCQ QUESTION */}
-          <div className="max-h-[220px] overflow-auto pb-10">
-            <div className="text-lg text-gray-700 dark:text-gray-300 whitespace-pre-wrap break-words leading-relaxed">
+          {/* SCROLLABLE QUESTION */}
+          <div className="max-h-[180px] sm:max-h-[220px] overflow-auto pb-6 sm:pb-10">
+            <div className="text-sm sm:text-base md:text-lg text-gray-700 dark:text-gray-300 whitespace-pre-wrap break-words leading-relaxed">
               {cleanMCQText(question.question)}
             </div>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2 sm:space-y-3">
             {question.options.map((opt, i) => (
               <div
                 key={i}
                 onClick={() => setAnswer(i)}
-                className={`p-4 rounded-xl cursor-pointer border transition ${
+                className={`p-3 sm:p-4 rounded-xl cursor-pointer border transition text-sm sm:text-base ${
                   answer === i
                     ? 'bg-blue-500 text-white'
                     : 'hover:bg-gray-200 dark:hover:bg-white/10'
@@ -72,11 +70,11 @@ export default function QuestionCard({
       {/* ================= DEBUG ================= */}
       {section === 'debug' && question && (
         <>
-          <p className="text-lg font-medium text-gray-800 dark:text-gray-200">
+          <p className="text-sm sm:text-base md:text-lg font-medium text-gray-800 dark:text-gray-200">
             {question.problem}
           </p>
 
-          <div className="bg-black text-green-400 p-4 pb-10 rounded-xl text-sm font-mono space-y-2 overflow-auto max-w-full max-h-[400px]">
+          <div className="bg-black text-green-400 p-3 sm:p-4 pb-6 sm:pb-10 rounded-xl text-xs sm:text-sm font-mono space-y-2 overflow-auto max-w-full max-h-[300px] sm:max-h-[400px]">
             {(() => {
               let globalIndex = 0;
 
@@ -105,7 +103,14 @@ export default function QuestionCard({
                               onChange={(e) =>
                                 handleBlankChange(e.target.value, currentIndex)
                               }
-                              className="mx-1 px-2 py-1 w-24 text-black rounded outline-none"
+                              className="
+                                mx-1 px-2 py-1
+                                w-20 sm:w-24
+                                text-xs sm:text-sm
+                                text-black
+                                rounded
+                                outline-none
+                              "
                             />
                           )}
                         </span>

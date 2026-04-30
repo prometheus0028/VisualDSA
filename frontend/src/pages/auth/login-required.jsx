@@ -8,7 +8,6 @@ export default function LoginRequired() {
   const location = useLocation();
   const { user } = useAuthStore();
 
-  // 🔥 get where user wanted to go
   const from = location.state?.from || '/';
 
   // ================= SCROLL TO TOP =================
@@ -19,46 +18,52 @@ export default function LoginRequired() {
     });
   }, []);
 
-  // ================= AUTO REDIRECT AFTER LOGIN =================
+  // ================= AUTO REDIRECT =================
   useEffect(() => {
     if (user) {
       navigate(from, { replace: true });
     }
   }, [user]);
 
-  // ================= LOGIN HANDLER =================
   const handleLogin = () => {
-    // 🔥 OPTION 1: if you have login modal trigger
     window.dispatchEvent(new Event('open_login_modal'));
-
-    // 🔥 OPTION 2 (fallback): redirect to home where login exists
-    // navigate('/', { state: { openLogin: true, from } });
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f5f1e8] dark:bg-zinc-900 px-6">
-      <div className="max-w-md w-full text-center p-10 rounded-2xl bg-white/60 dark:bg-white/5 border backdrop-blur-xl">
-        <h1 className="text-3xl font-bold mb-4 text-red-500">Login Required</h1>
+    <div className="min-h-screen flex items-center justify-center bg-[#f5f1e8] dark:bg-zinc-900 px-4 sm:px-6">
+      <div
+        className="
+        max-w-md w-full text-center
+        p-6 sm:p-8 md:p-10
+        rounded-2xl
+        bg-white/60 dark:bg-white/5
+        border backdrop-blur-xl
+      "
+      >
+        <h1 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4 text-red-500">
+          Login Required
+        </h1>
 
-        <p className="text-gray-600 dark:text-gray-400 mb-6">
+        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-5 sm:mb-6">
           Please login to continue using this feature.
         </p>
 
         <button
           onClick={handleLogin}
           className="
-            px-6 py-2 rounded-full
+            px-5 sm:px-6 py-2 sm:py-2.5 rounded-full
             bg-blue-500 text-white
             hover:bg-blue-600 transition
+            text-sm sm:text-base
           "
         >
           Login
         </button>
 
-        <div className="mt-6">
+        <div className="mt-5 sm:mt-6">
           <button
             onClick={() => navigate('/')}
-            className="text-sm text-gray-500 hover:underline"
+            className="text-xs sm:text-sm text-gray-500 hover:underline"
           >
             ← Go Back Home
           </button>

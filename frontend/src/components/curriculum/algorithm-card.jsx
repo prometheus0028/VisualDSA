@@ -13,9 +13,6 @@ export default function AlgorithmCard({ categoryId, algo, subsectionId }) {
   };
 
   const handleClick = () => {
-    // ===============================
-    // STORE STATE (IMPORTANT FIX)
-    // ===============================
     localStorage.setItem('activeCategory', categoryId);
 
     if (subsectionId) {
@@ -24,9 +21,6 @@ export default function AlgorithmCard({ categoryId, algo, subsectionId }) {
 
     sessionStorage.setItem('fromAlgo', 'true');
 
-    // ===============================
-    // NAVIGATE
-    // ===============================
     navigate(`/curriculum/${categoryId}/${algo.id}`);
   };
 
@@ -37,30 +31,44 @@ export default function AlgorithmCard({ categoryId, algo, subsectionId }) {
       viewport={{ once: true }}
       transition={{ duration: 0.4 }}
       whileHover={{ scale: 1.03 }}
+      whileTap={{ scale: 0.98 }} // ✅ mobile touch fix
       onClick={handleClick}
-      className="cursor-pointer p-4 rounded-xl backdrop-blur-xl 
-                 bg-white/60 dark:bg-white/5 
-                 border border-gray-200 dark:border-white/10 
-                 shadow-sm hover:shadow-md
-                 transition-all duration-300"
+      className="
+        cursor-pointer
+        p-4 sm:p-5
+        rounded-xl
+        backdrop-blur-xl
+        bg-white/60 dark:bg-white/5
+        border border-gray-200 dark:border-white/10
+        shadow-sm hover:shadow-md
+        transition-all duration-300
+        w-full
+      "
     >
-      <div className="flex justify-between items-start mb-3">
-        <h3 className="text-base font-semibold">{algo.title}</h3>
+      {/* HEADER */}
+      <div className="flex justify-between items-start gap-2 mb-3">
+        <h3 className="text-sm sm:text-base font-semibold leading-snug break-words">
+          {algo.title}
+        </h3>
 
         <span
-          className={`text-[10px] px-2 py-0.5 rounded-full ${
-            difficultyColor[algo.difficulty]
-          }`}
+          className={`
+            text-[10px] sm:text-xs
+            px-2 py-0.5 rounded-full
+            whitespace-nowrap shrink-0
+            ${difficultyColor[algo.difficulty]}
+          `}
         >
           {algo.difficulty}
         </span>
       </div>
 
-      <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">
+      {/* META */}
+      <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-1">
         Time: {algo.time}
       </p>
 
-      <p className="text-xs text-gray-600 dark:text-gray-400">
+      <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
         Space: {algo.space}
       </p>
     </motion.div>

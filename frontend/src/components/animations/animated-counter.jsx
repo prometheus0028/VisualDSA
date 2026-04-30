@@ -4,6 +4,7 @@ export default function AnimatedCounter({ value, suffix = '' }) {
   const [count, setCount] = useState(0);
   const ref = useRef(null);
   const started = useRef(false);
+  const rafRef = useRef(null); // 🔥 track animation frame
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -11,30 +12,39 @@ export default function AnimatedCounter({ value, suffix = '' }) {
         if (entry.isIntersecting && !started.current) {
           started.current = true;
 
-          let start = 0;
           const duration = 1200;
           const startTime = performance.now();
 
           const animate = (now) => {
             const progress = Math.min((now - startTime) / duration, 1);
-            setCount(Math.floor(progress * value));
-            if (progress < 1) requestAnimationFrame(animate);
+
+            // 🔥 ease-out (smoother than linear)
+            const eased = 1 - Math.pow(1 - progress, 3);
+
+            setCount(Math.floor(eased * value));
+
+            if (progress < 1) {
+              rafRef.current = requestAnimationFrame(animate);
+            }
           };
 
-          requestAnimationFrame(animate);
+          rafRef.current = requestAnimationFrame(animate);
         }
       },
-      { threshold: 0.15 }, // triggers earlier
+      { threshold: 0.15 },
     );
 
     if (ref.current) observer.observe(ref.current);
 
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      if (rafRef.current) cancelAnimationFrame(rafRef.current); // 🔥 cleanup
+    };
   }, [value]);
 
   return (
-    <span ref={ref}>
-      {count}
+    <span ref={ref} className="tabular-nums">
+      {count.toLocaleString()}
       {suffix}
     </span>
   );

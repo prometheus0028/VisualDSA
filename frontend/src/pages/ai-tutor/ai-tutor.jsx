@@ -14,14 +14,14 @@ export default function AITutor() {
     window.scrollTo(0, 0);
   }, []);
 
-  // 🔥 FIX: reset + reload on user change
+  // 🔥 reload on user change
   useEffect(() => {
     if (!user) {
-      setChats([]); // clear on logout
+      setChats([]);
       return;
     }
 
-    setChats([]); // 🔥 CLEAR OLD USER DATA IMMEDIATELY
+    setChats([]);
     loadChats();
   }, [user]);
 
@@ -31,13 +31,23 @@ export default function AITutor() {
       setChats(data || []);
     } catch (err) {
       console.error('Chat load error:', err);
-      setChats([]); // 🔥 avoid stale UI
+      setChats([]);
     }
   };
 
   return (
-    <div className="bg-[#f5f1e8] dark:bg-zinc-900 min-h-screen text-black dark:text-white">
-      <ChatLayout chats={chats} refreshChats={loadChats} />
+    <div
+      className="
+        bg-[#f5f1e8] dark:bg-zinc-900
+        min-h-screen
+        text-black dark:text-white
+        overflow-x-hidden
+      "
+    >
+      {/* 🔥 Wrapper for responsive safety */}
+      <div className="w-full max-w-full overflow-hidden">
+        <ChatLayout chats={chats} refreshChats={loadChats} />
+      </div>
     </div>
   );
 }

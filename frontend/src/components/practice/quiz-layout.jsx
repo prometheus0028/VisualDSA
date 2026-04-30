@@ -85,7 +85,7 @@ export default function QuizLayout({ topic }) {
   }, [currentSection, sectionIndex, answers, visited]);
 
   // ================= TIMER =================
-  const [remainingTime, setRemainingTime] = useState(1800);
+  const [remainingTime, setRemainingTime] = useState(2700);
 
   useEffect(() => {
     const start = Date.now();
@@ -93,7 +93,7 @@ export default function QuizLayout({ topic }) {
 
     const interval = setInterval(() => {
       const elapsed = Math.floor((Date.now() - start) / 1000);
-      const remaining = 1800 - elapsed;
+      const remaining = 2700 - elapsed;
 
       if (remaining <= 0) {
         clearInterval(interval);
@@ -161,7 +161,6 @@ export default function QuizLayout({ topic }) {
     });
   };
 
-  // ================= NAV =================
   const markVisitedIfSkipped = () => {
     const key = `${currentSection}-${currentIndex}`;
 
@@ -227,7 +226,6 @@ export default function QuizLayout({ topic }) {
     setShowSubmit(true);
   };
 
-  // ================= FIRST CLICK FULLSCREEN =================
   useEffect(() => {
     const handleFirstInteraction = () => {
       if (quizRef.current && !document.fullscreenElement) {
@@ -242,7 +240,6 @@ export default function QuizLayout({ topic }) {
     return () => window.removeEventListener('click', handleFirstInteraction);
   }, []);
 
-  // ================= CLEAN LOADING UI =================
   if (!sections.mcq.length && !sections.debug.length) {
     return (
       <div className="fixed inset-0 bg-[#f5f1e8] dark:bg-zinc-900 flex items-center justify-center text-black dark:text-white text-lg font-semibold">
@@ -254,10 +251,12 @@ export default function QuizLayout({ topic }) {
   return (
     <div
       ref={quizRef}
-      className="bg-[#f5f1e8] dark:bg-zinc-900 min-h-screen overflow-y-auto text-black dark:text-white"
+      className="bg-[#f5f1e8] dark:bg-zinc-900 min-h-screen overflow-x-hidden text-black dark:text-white"
     >
-      <div className="pt-36 px-6 max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
+      {/* 🔥 RESPONSIVE CONTAINER */}
+      <div className="pt-28 sm:pt-32 px-3 sm:px-5 md:px-6 max-w-7xl mx-auto">
+        {/* 🔥 HEADER STACK FIX */}
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-0 justify-between items-center mb-6 sm:mb-8">
           <SectionTabs
             current={currentSection}
             setCurrent={setCurrentSection}
@@ -265,17 +264,22 @@ export default function QuizLayout({ topic }) {
           <Timer duration={remainingTime} onTimeUp={handleTimeUp} />
         </div>
 
-        <div className="grid md:grid-cols-4 gap-8">
-          <Navigation
-            total={totalQuestions}
-            currentIndex={currentIndex}
-            answers={answers}
-            visited={visited}
-            section={currentSection}
-            setIndex={handleSetIndex}
-          />
+        {/* 🔥 GRID FIX */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8">
+          {/* NAV */}
+          <div className="order-2 md:order-1">
+            <Navigation
+              total={totalQuestions}
+              currentIndex={currentIndex}
+              answers={answers}
+              visited={visited}
+              section={currentSection}
+              setIndex={handleSetIndex}
+            />
+          </div>
 
-          <div className="md:col-span-3">
+          {/* QUESTION */}
+          <div className="order-1 md:order-2 md:col-span-3">
             <QuestionCard
               section={currentSection}
               index={currentIndex}
@@ -296,7 +300,8 @@ export default function QuizLayout({ topic }) {
               }}
             />
 
-            <div className="flex justify-between mt-6">
+            {/* 🔥 BUTTONS FIX */}
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-0 justify-between mt-6">
               <button
                 onClick={prevQuestion}
                 disabled={currentIndex === 0 || quizEnded}
@@ -332,7 +337,7 @@ export default function QuizLayout({ topic }) {
         <SubmitModal
           answers={answers}
           sections={sections}
-          topic={topic} // 🔥 ADDED (CRITICAL)
+          topic={topic}
           forceSubmit={quizEnded}
           reason={
             endReason === 'timeout' ? 'Time is up' : 'Malpractice detected'

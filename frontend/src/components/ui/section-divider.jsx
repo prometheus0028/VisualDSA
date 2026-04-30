@@ -1,9 +1,14 @@
 export default function SectionDivider({ flip }) {
   return (
-    <div className={`${flip ? 'rotate-180' : ''} overflow-hidden leading-none`}>
+    <div
+      className={`
+        w-full overflow-hidden leading-none
+        ${flip ? 'rotate-180' : ''}
+      `}
+    >
       <svg
         viewBox="0 0 1440 120"
-        className="w-full h-24 text-white dark:text-[#111]"
+        className="w-full h-16 sm:h-20 md:h-24 text-white dark:text-[#111]"
         preserveAspectRatio="none"
       >
         <path

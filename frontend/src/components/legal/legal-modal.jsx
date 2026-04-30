@@ -73,19 +73,29 @@ export default function LegalModal({ open, onClose, type }) {
 
   return (
     <Modal open={open} onClose={onClose}>
-      <div className="w-full max-w-lg bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-white/10 p-8">
+      <div
+        className="
+        w-full max-w-lg
+        max-h-[90vh] overflow-y-auto
+        bg-white dark:bg-zinc-900
+        rounded-2xl border border-gray-200 dark:border-white/10
+        p-5 sm:p-6 md:p-8
+        "
+      >
         {/* Title */}
-        <h2 className="text-2xl font-bold text-blue-600 mb-6">{data.title}</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-blue-600 mb-5 sm:mb-6">
+          {data.title}
+        </h2>
 
-        {/* Single Content Box */}
-        <div className="space-y-3 text-sm text-gray-700 dark:text-gray-300">
+        {/* Content */}
+        <div className="space-y-3 text-sm sm:text-base text-gray-700 dark:text-gray-300">
           {data.points.map((p, i) => (
             <p key={i}>• {p}</p>
           ))}
         </div>
 
         {/* Footer */}
-        <div className="mt-8 text-right">
+        <div className="mt-6 sm:mt-8 flex justify-center sm:justify-end">
           <button
             onClick={onClose}
             className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition"

@@ -18,7 +18,6 @@ const fadeUp = {
 export default function PracticeHome() {
   const navigate = useNavigate();
 
-  // ✅ SCROLL TOP ON LOAD
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
@@ -52,13 +51,13 @@ export default function PracticeHome() {
 
   return (
     <div className="bg-[#f5f1e8] dark:bg-zinc-900 min-h-screen text-black dark:text-white">
-      <section className="pt-44 pb-28 px-6">
+      <section className="pt-32 sm:pt-40 md:pt-44 pb-20 sm:pb-24 md:pb-28 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto text-center">
-          {/* 🔙 BACK */}
+          {/* BACK */}
           <div className="flex justify-start mb-6">
             <button
               onClick={() => navigate('/get-started')}
-              className="px-5 py-2 rounded-full bg-blue-400 text-white dark:bg-blue-500 dark:text-black text-sm font-semibold hover:scale-105 transition"
+              className="px-4 sm:px-5 py-2 rounded-full bg-blue-400 text-white dark:bg-blue-500 dark:text-black text-xs sm:text-sm font-semibold hover:scale-105 transition"
             >
               ← Back
             </button>
@@ -69,7 +68,7 @@ export default function PracticeHome() {
             initial="hidden"
             animate="visible"
             variants={fadeUp}
-            className="text-6xl font-extrabold mb-6 text-green-500 dark:text-blue-400"
+            className="text-3xl sm:text-4xl md:text-6xl font-extrabold mb-4 sm:mb-6 text-green-500 dark:text-blue-400"
           >
             Practice Arena
           </motion.h1>
@@ -80,14 +79,14 @@ export default function PracticeHome() {
             animate="visible"
             variants={fadeUp}
             custom={1}
-            className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-16"
+            className="text-sm sm:text-base text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-10 sm:mb-12 md:mb-16 px-2"
           >
             Take structured AI-powered tests designed to evaluate your DSA
             skills under real conditions and improve strategically.
           </motion.p>
 
           {/* FEATURES */}
-          <div className="grid md:grid-cols-3 gap-8 mb-14">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 sm:gap-6 md:gap-8 mb-10 sm:mb-12 md:mb-14">
             {features.map((f, i) => (
               <motion.div
                 key={i}
@@ -96,7 +95,7 @@ export default function PracticeHome() {
                 animate="visible"
                 custom={i}
                 className="
-                  p-7 rounded-3xl
+                  p-5 sm:p-6 md:p-7 rounded-3xl
                   bg-white/50 dark:bg-white/5
                   border dark:border-white/10
                   shadow-md
@@ -104,8 +103,11 @@ export default function PracticeHome() {
                   text-left
                 "
               >
-                <h3 className="text-lg font-semibold mb-2">{f.title}</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <h3 className="text-base sm:text-lg font-semibold mb-2">
+                  {f.title}
+                </h3>
+
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                   {f.desc}
                 </p>
               </motion.div>
@@ -119,7 +121,7 @@ export default function PracticeHome() {
             variants={fadeUp}
             custom={3}
             onClick={() => navigate('/practice/select')}
-            className="px-10 py-3 rounded-full bg-blue-400 text-white dark:bg-blue-500 dark:text-black text-sm font-semibold hover:scale-105 transition"
+            className="px-6 sm:px-8 md:px-10 py-2.5 sm:py-3 rounded-full bg-blue-400 text-white dark:bg-blue-500 dark:text-black text-xs sm:text-sm font-semibold hover:scale-105 transition"
           >
             Select Topic
           </motion.button>

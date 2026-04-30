@@ -10,16 +10,13 @@ export default function ChatSidebar({
   const navigate = useNavigate();
 
   const deleteChatAPI = async (chatId) => {
-    const API = import.meta.env.VITE_API_URL; // ✅ added
+    const API = import.meta.env.VITE_API_URL;
 
     const res = await fetch(`${API}/api/tutor/chat/${chatId}`, {
-      // ✅ fixed
       method: 'DELETE',
     });
 
-    if (!res.ok) {
-      throw new Error('Delete failed');
-    }
+    if (!res.ok) throw new Error('Delete failed');
 
     return res.json();
   };
@@ -27,12 +24,9 @@ export default function ChatSidebar({
   const handleDelete = async (e, chatId) => {
     e.stopPropagation();
 
-    const confirmDelete = window.confirm('Delete this chat permanently?');
-    if (!confirmDelete) return;
+    if (!window.confirm('Delete this chat permanently?')) return;
 
     try {
-      console.log('Deleting chat:', chatId); // 🔥 DEBUG
-
       await deleteChatAPI(chatId);
 
       if (activeChat?.id === chatId) {
@@ -45,82 +39,96 @@ export default function ChatSidebar({
 
       await refreshChats();
     } catch (err) {
-      console.error('❌ Delete chat failed:', err);
+      console.error(err);
       alert('Failed to delete chat');
     }
   };
 
   return (
-    <div className="w-72 h-full bg-white dark:bg-zinc-900 border-r dark:border-white/10 flex flex-col">
-      <div className="p-5 border-b dark:border-white/10">
-        <div className="p-5 border-b dark:border-white/10 display-flex">
-          <button
-            onClick={() => navigate('/get-started')}
-            className="px-4 py-1.5 rounded-full bg-blue-400 text-white dark:bg-blue-500 dark:text-black text-xs font-semibold hover:scale-105 transition"
-          >
-            ←
-          </button>
+    <div className="w-72 max-w-[85vw] h-full flex flex-col bg-white dark:bg-zinc-900 border-r dark:border-white/10">
+      {/* ================= TOP SECTION ================= */}
+      <div className="px-4 pt-4 pb-3 flex flex-col gap-3">
+        {/* BACK BUTTON */}
+        <button
+          onClick={() => navigate('/get-started')}
+          className="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-white/10 hover:scale-105 transition"
+        >
+          ←
+        </button>
 
-          <h2 className="text-2xl font-bold text-green-500 tracking-tight">
-            AI Tutor
-          </h2>
-        </div>
+        {/* TITLE (UNCHANGED POSITION) */}
+        <h2 className="text-2xl font-bold text-green-500 tracking-tight">
+          AI Tutor
+        </h2>
+      </div>
 
-        {/* NEW CHAT */}
-        <div className="p-5 border-b dark:border-white/10">
-          <button
-            onClick={openModal}
-            className="w-full bg-blue-500 text-white py-2.5 rounded-xl hover:bg-blue-600 transition"
-          >
-            + New Chat
-          </button>
-        </div>
+      {/* ================= DIVIDER ================= */}
+      <div className="border-t dark:border-white/10 mx-4" />
 
-        {/* CHAT LIST */}
-        <div className="flex-1 overflow-y-auto p-3 space-y-2">
-          {chats.map((chat) => (
-            <div
-              key={chat.id}
-              onClick={() => setActiveChat(chat)}
-              className={`
-              relative p-3 rounded-xl cursor-pointer text-sm
-              border transition group
+      {/* ================= NEW CHAT BUTTON ================= */}
+      <div className="p-4">
+        <button
+          onClick={openModal}
+          className="
+            w-full flex items-center justify-center gap-2
+            px-4 py-3
+            rounded-2xl
+            bg-gradient-to-r from-blue-500 via-blue-600 to-blue-500
+            text-white text-sm font-semibold
+            shadow-lg shadow-blue-500/20
+            hover:scale-[1.02] active:scale-[0.98]
+            transition-all duration-200
+          "
+        >
+          <span className="text-lg">＋</span>
+          New Chat
+        </button>
+      </div>
+
+      {/* ================= CHAT LIST ================= */}
+      <div className="flex-1 overflow-y-auto px-3 pb-4 space-y-2">
+        {chats.map((chat) => (
+          <div
+            key={chat.id}
+            onClick={() => setActiveChat(chat)}
+            className={`
+              relative px-3 py-2.5 rounded-lg cursor-pointer text-sm
+              transition group
               ${
                 activeChat?.id === chat.id
-                  ? 'bg-blue-500 text-white border-blue-500'
-                  : 'bg-gray-100 dark:bg-white/5 border-transparent hover:bg-gray-200 dark:hover:bg-white/10'
+                  ? 'bg-blue-500 dark:bg-blue-700 text-white'
+                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10'
               }
             `}
-            >
-              {chat.title || 'New Chat'}
+          >
+            <p className="truncate">{chat.title || 'New Chat'}</p>
 
-              {/* 🔥 SVG DELETE ICON */}
-              <button
-                onClick={(e) => handleDelete(e, chat.id)}
-                className="
-                  absolute right-2 top-2
-                  opacity-0 group-hover:opacity-100
-                  transition text-red-500 hover:scale-110
-                "
+            {/* DELETE ICON */}
+            <button
+              onClick={(e) => handleDelete(e, chat.id)}
+              className="
+                absolute right-2 top-2
+                opacity-0 group-hover:opacity-100
+                transition text-red-500 hover:scale-110
+              "
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-4 h-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 7h12M9 7V4h6v3m-7 4v6m4-6v6m5-10l-1 14H7L6 7h12z"
-                  />
-                </svg>
-              </button>
-            </div>
-          ))}
-        </div>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 7h12M9 7V4h6v3m-7 4v6m4-6v6m5-10l-1 14H7L6 7h12z"
+                />
+              </svg>
+            </button>
+          </div>
+        ))}
       </div>
     </div>
   );

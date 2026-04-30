@@ -12,7 +12,7 @@ import History from '../../components/dashboard/history';
 
 export default function Dashboard() {
   const { user } = useAuthStore();
-  const navigate = useNavigate(); // ✅ NEW
+  const navigate = useNavigate();
 
   const [tab, setTab] = useState('Consistency');
   const [data, setData] = useState([]);
@@ -58,12 +58,12 @@ export default function Dashboard() {
 
   return (
     <div className="bg-[#f5f1e8] dark:bg-zinc-900 text-gray-900 dark:text-white min-h-screen">
-      <section className="pt-44 pb-28 px-6">
-        {/* 🔥 NEW: LEFT BUTTON ROW */}
+      <section className="pt-28 sm:pt-36 md:pt-44 pb-16 sm:pb-20 md:pb-28 px-4 sm:px-6">
+        {/* BACK BUTTON */}
         <div className="max-w-7xl mx-auto mb-6 flex justify-start">
           <button
             onClick={() => navigate('/get-started')}
-            className="mb-8 px-6 py-2 rounded-full bg-blue-400 text-white dark:bg-blue-500 dark:text-black text-sm font-semibold hover:scale-105 transition"
+            className="px-4 sm:px-6 py-2 rounded-full bg-blue-400 text-white dark:bg-blue-500 dark:text-black text-xs sm:text-sm font-semibold hover:scale-105 transition"
           >
             ← Back
           </button>
@@ -73,30 +73,38 @@ export default function Dashboard() {
         <motion.h1
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-6xl font-extrabold text-center mb-6 dark:text-green-400 text-green-400"
+          className="
+            text-3xl sm:text-4xl md:text-5xl lg:text-6xl
+            font-extrabold text-center mb-4 sm:mb-6
+            text-green-400 dark:text-green-400
+          "
         >
           Dashboard
         </motion.h1>
 
         {/* DESCRIPTION */}
-        <p className="text-center text-gray-600 dark:text-gray-400 mb-10 max-w-3xl mx-auto">
-          Welcome back, <span className="font-semibold">{name}</span> 👋
+        <p className="text-center text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-8 sm:mb-10 max-w-xl sm:max-w-2xl md:max-w-3xl mx-auto px-2">
+          Welcome back, <span className="font-semibold">{name}</span>
           <br />
           Stay consistent daily — progress compounds over time.
         </p>
 
         {/* TABS */}
-        <div className="flex flex-wrap justify-center gap-3 mb-14">
+        <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-10 sm:mb-14 px-2">
           {['Consistency', 'SWOT', 'History'].map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
-              className={`px-9 py-2.5 rounded-full text-xs font-medium transition
+              className={`
+                px-4 sm:px-6 md:px-9
+                py-2 sm:py-2.5
+                rounded-full text-xs sm:text-sm font-medium transition
                 ${
                   tab === t
                     ? 'bg-blue-500 text-white'
                     : 'bg-gray-200 dark:bg-white/10'
-                }`}
+                }
+              `}
             >
               {t}
             </button>
@@ -104,7 +112,7 @@ export default function Dashboard() {
         </div>
 
         {/* CONTENT */}
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto px-1 sm:px-2">
           {tab === 'Consistency' && <Heatmap data={data} />}
           {tab === 'SWOT' && <Swot key={refreshKey} />}
           {tab === 'History' && <History key={refreshKey} />}

@@ -9,7 +9,7 @@ export default function FAQAccordion({ items }) {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 sm:space-y-4">
       {items.map((item, i) => {
         const isOpen = openIndex === i;
 
@@ -21,9 +21,9 @@ export default function FAQAccordion({ items }) {
             {/* HEADER */}
             <button
               onClick={() => toggle(i)}
-              className="w-full text-left px-6 py-4 flex justify-between items-center"
+              className="w-full text-left px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center"
             >
-              <span className="font-medium">{item.q}</span>
+              <span className="font-medium text-sm sm:text-base">{item.q}</span>
 
               <span
                 className={`transition-transform duration-300 ${
@@ -34,20 +34,16 @@ export default function FAQAccordion({ items }) {
               </span>
             </button>
 
-            {/* CONTENT (FIXED ANIMATION) */}
+            {/* CONTENT (SMOOTH FIX) */}
             <AnimatePresence initial={false}>
               {isOpen && (
                 <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{
-                    duration: 0.25,
-                    ease: 'easeOut',
-                  }}
-                  style={{ overflow: 'hidden' }}
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
                 >
-                  <div className="px-6 pb-4 text-sm text-gray-600 dark:text-gray-400">
+                  <div className="px-4 sm:px-6 pb-3 sm:pb-4 text-sm text-gray-600 dark:text-gray-400">
                     {item.a}
                   </div>
                 </motion.div>

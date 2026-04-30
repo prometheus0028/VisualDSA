@@ -14,18 +14,24 @@ export default function Modal({ open, onClose, children }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.4 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 overflow-hidden"
+          transition={{ duration: 0.3 }}
+          className="fixed inset-0 z-50 flex items-center justify-center px-4 sm:px-6 bg-black/60"
           onClick={onClose}
         >
-          {/* ❌ REMOVED GLOW (gradient blob) */}
-
-          {/* ❌ REMOVED BACKDROP BLUR */}
-
-          {/* Subtle Noise Overlay (kept - not glow) */}
+          {/* Subtle Noise Overlay */}
           <div className="absolute inset-0 opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
 
-          <div onClick={(e) => e.stopPropagation()} className="relative z-10">
+          {/* 🔥 CONTENT WRAPPER FIX */}
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="
+              relative z-10
+              w-full max-w-lg
+              max-h-[90vh]
+              overflow-y-auto
+              rounded-xl
+            "
+          >
             {children}
           </div>
         </motion.div>

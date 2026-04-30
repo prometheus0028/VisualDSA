@@ -12,7 +12,7 @@ export default function InputBox({
   const { user } = useAuthStore();
 
   const [text, setText] = useState('');
-  const [sending, setSending] = useState(false); // 🔥 NEW
+  const [sending, setSending] = useState(false);
 
   const handleSend = async () => {
     if (!text.trim() || !activeChat || sending) return;
@@ -20,25 +20,21 @@ export default function InputBox({
     const messageToSend = text;
 
     setText('');
-    setSending(true); // 🔥 prevent spam clicks
+    setSending(true);
 
     const userMsg = { role: 'user', content: messageToSend };
 
-    // ✅ instant UI update
     setMessages((prev) => [...prev, userMsg]);
 
     setIsThinking(true);
 
     try {
-      // ✅ AI ONLY CALLED HERE (correct behavior)
       const res = await sendMessage(activeChat.id, user.id, messageToSend);
 
       await trackActivity(user.id, 'ai');
 
-      // ✅ replace messages with backend result
       setMessages(res.messages);
 
-      // ✅ refresh sidebar
       await refreshChats();
     } catch (err) {
       console.error(err);
@@ -52,20 +48,29 @@ export default function InputBox({
     <div
       className="
       flex items-center gap-3
-      bg-white dark:bg-zinc-800
-      border dark:border-white/10
+      bg-white/80 dark:bg-zinc-800/80
+      backdrop-blur-xl
+      border border-gray-200 dark:border-white/10
       rounded-2xl px-4 py-3
-      shadow-lg
+      shadow-xl
+      transition
+      focus-within:ring-2 focus-within:ring-blue-500/40
       "
     >
+      {/* INPUT */}
       <input
         value={text}
-        disabled={sending} // 🔥 disable while sending
+        disabled={sending}
         onChange={(e) => setText(e.target.value)}
         onKeyDown={(e) => {
           if (e.key === 'Enter') handleSend();
         }}
-        className="flex-1 bg-transparent outline-none text-sm disabled:opacity-50"
+        className="
+          flex-1 bg-transparent outline-none
+          text-sm sm:text-base
+          placeholder:text-gray-400 dark:placeholder:text-gray-500
+          disabled:opacity-50
+        "
         placeholder={
           activeChat
             ? 'Ask anything about DSA...'
@@ -73,16 +78,38 @@ export default function InputBox({
         }
       />
 
+      {/* SEND BUTTON (ICON STYLE LIKE CHATGPT) */}
       <button
         onClick={handleSend}
         disabled={sending || !activeChat}
         className="
-        px-5 py-2 bg-blue-500 text-white rounded-xl
-        hover:bg-blue-600 transition
-        disabled:opacity-50 disabled:cursor-not-allowed
+          w-10 h-10 flex items-center justify-center
+          rounded-full
+          bg-blue-500 text-white
+          hover:bg-blue-600
+          active:scale-95
+          transition
+          disabled:opacity-40 disabled:cursor-not-allowed
         "
       >
-        {sending ? 'Sending...' : 'Send'}
+        {sending ? (
+          <span className="text-xs animate-pulse">...</span>
+        ) : (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-4 h-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M5 12h14M13 6l6 6-6 6"
+            />
+          </svg>
+        )}
       </button>
     </div>
   );

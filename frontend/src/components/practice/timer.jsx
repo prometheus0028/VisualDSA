@@ -14,7 +14,6 @@ export default function Timer({ duration, onTimeUp }) {
   });
 
   useEffect(() => {
-    // 🔥 set start time only once
     if (!localStorage.getItem('quiz_start')) {
       localStorage.setItem('quiz_start', Date.now());
     }
@@ -43,5 +42,20 @@ export default function Timer({ duration, onTimeUp }) {
       .padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
-  return <div className="font-semibold">⏳ {format()}</div>;
+  return (
+    <div
+      className="
+        flex items-center justify-center
+        px-3 sm:px-4 py-1.5 sm:py-2
+        rounded-full
+        bg-white/70 dark:bg-white/5
+        backdrop-blur-md
+        border dark:border-white/10
+        text-xs sm:text-sm font-semibold
+        whitespace-nowrap
+      "
+    >
+      ⏳ {format()}
+    </div>
+  );
 }

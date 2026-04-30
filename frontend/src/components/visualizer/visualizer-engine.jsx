@@ -42,7 +42,6 @@ import DPSequenceEngine from './engines/dp-sequence-engine';
 import DPTreeEngine from './engines/dp-tree-engine';
 
 import GreedyEngine from './engines/greedy-engine';
-
 export default function VisualizerEngine({ algorithm, onStepChange }) {
   const id = algorithm?.id || '';
 
@@ -51,7 +50,12 @@ export default function VisualizerEngine({ algorithm, onStepChange }) {
   // ===============================
   if (id === 'priority-queue') {
     return (
-      <PriorityQueueEngine algorithm={algorithm} onStepChange={onStepChange} />
+      <div className="w-full h-full min-h-0 overflow-hidden">
+        <PriorityQueueEngine
+          algorithm={algorithm}
+          onStepChange={onStepChange}
+        />
+      </div>
     );
   }
 
@@ -64,7 +68,9 @@ export default function VisualizerEngine({ algorithm, onStepChange }) {
     id === 'circular-linked-list'
   ) {
     return (
-      <LinkedListEngine algorithm={algorithm} onStepChange={onStepChange} />
+      <div className="w-full h-full min-h-0 overflow-hidden">
+        <LinkedListEngine algorithm={algorithm} onStepChange={onStepChange} />
+      </div>
     );
   }
 
@@ -72,7 +78,11 @@ export default function VisualizerEngine({ algorithm, onStepChange }) {
   // STACK
   // ===============================
   if (id.includes('stack')) {
-    return <StackEngine algorithm={algorithm} onStepChange={onStepChange} />;
+    return (
+      <div className="w-full h-full min-h-0 overflow-hidden">
+        <StackEngine algorithm={algorithm} onStepChange={onStepChange} />
+      </div>
+    );
   }
 
   // ===============================
@@ -83,14 +93,22 @@ export default function VisualizerEngine({ algorithm, onStepChange }) {
     id === 'queue-using-linked-list' ||
     id === 'circular-queue'
   ) {
-    return <QueueEngine algorithm={algorithm} onStepChange={onStepChange} />;
+    return (
+      <div className="w-full h-full min-h-0 overflow-hidden">
+        <QueueEngine algorithm={algorithm} onStepChange={onStepChange} />
+      </div>
+    );
   }
 
   // ===============================
   // HANOI
   // ===============================
   if (id.includes('hanoi')) {
-    return <HanoiEngine algorithm={algorithm} onStepChange={onStepChange} />;
+    return (
+      <div className="w-full h-full min-h-0 overflow-hidden">
+        <HanoiEngine algorithm={algorithm} onStepChange={onStepChange} />
+      </div>
+    );
   }
 
   // ===============================
@@ -98,7 +116,9 @@ export default function VisualizerEngine({ algorithm, onStepChange }) {
   // ===============================
   if (id === 'infix-to-postfix' || id === 'postfix-evaluation') {
     return (
-      <ExpressionEngine algorithm={algorithm} onStepChange={onStepChange} />
+      <div className="w-full h-full min-h-0 overflow-hidden">
+        <ExpressionEngine algorithm={algorithm} onStepChange={onStepChange} />
+      </div>
     );
   }
 
@@ -106,7 +126,11 @@ export default function VisualizerEngine({ algorithm, onStepChange }) {
   // DEQUE
   // ===============================
   if (id.includes('deque')) {
-    return <DequeEngine algorithm={algorithm} onStepChange={onStepChange} />;
+    return (
+      <div className="w-full h-full min-h-0 overflow-hidden">
+        <DequeEngine algorithm={algorithm} onStepChange={onStepChange} />
+      </div>
+    );
   }
 
   // ===============================
@@ -114,7 +138,9 @@ export default function VisualizerEngine({ algorithm, onStepChange }) {
   // ===============================
   if (id === 'binary-tree') {
     return (
-      <BinaryTreeEngine algorithm={algorithm} onStepChange={onStepChange} />
+      <div className="w-full h-full min-h-0 overflow-hidden">
+        <BinaryTreeEngine algorithm={algorithm} onStepChange={onStepChange} />
+      </div>
     );
   }
 
@@ -128,7 +154,12 @@ export default function VisualizerEngine({ algorithm, onStepChange }) {
     id === 'level-order'
   ) {
     return (
-      <TreeTraversalEngine algorithm={algorithm} onStepChange={onStepChange} />
+      <div className="w-full h-full min-h-0 overflow-hidden">
+        <TreeTraversalEngine
+          algorithm={algorithm}
+          onStepChange={onStepChange}
+        />
+      </div>
     );
   }
 
@@ -140,21 +171,33 @@ export default function VisualizerEngine({ algorithm, onStepChange }) {
     id === 'bst-insertion' ||
     id === 'bst-deletion'
   ) {
-    return <BSTEngine algorithm={algorithm} onStepChange={onStepChange} />;
+    return (
+      <div className="w-full h-full min-h-0 overflow-hidden">
+        <BSTEngine algorithm={algorithm} onStepChange={onStepChange} />
+      </div>
+    );
   }
 
   // ===============================
   // AVL
   // ===============================
   if (id === 'avl-tree') {
-    return <AVLEngine algorithm={algorithm} onStepChange={onStepChange} />;
+    return (
+      <div className="w-full h-full min-h-0 overflow-hidden">
+        <AVLEngine algorithm={algorithm} onStepChange={onStepChange} />
+      </div>
+    );
   }
 
   // ===============================
   // HEAP
   // ===============================
   if (id === 'heap') {
-    return <HeapEngine algorithm={algorithm} onStepChange={onStepChange} />;
+    return (
+      <div className="w-full h-full min-h-0 overflow-hidden">
+        <HeapEngine algorithm={algorithm} onStepChange={onStepChange} />
+      </div>
+    );
   }
 
   // ===============================
@@ -162,7 +205,12 @@ export default function VisualizerEngine({ algorithm, onStepChange }) {
   // ===============================
   if (id === 'bfs' || id === 'dfs') {
     return (
-      <GraphTraversalEngine algorithm={algorithm} onStepChange={onStepChange} />
+      <div className="w-full h-full min-h-0 overflow-hidden">
+        <GraphTraversalEngine
+          algorithm={algorithm}
+          onStepChange={onStepChange}
+        />
+      </div>
     );
   }
 
@@ -171,10 +219,12 @@ export default function VisualizerEngine({ algorithm, onStepChange }) {
   // ===============================
   if (id === 'dijkstra' || id === 'bellman-ford' || id === 'a-star') {
     return (
-      <GraphShortestPathEngine
-        algorithm={algorithm}
-        onStepChange={onStepChange}
-      />
+      <div className="w-full h-full min-h-0 overflow-hidden">
+        <GraphShortestPathEngine
+          algorithm={algorithm}
+          onStepChange={onStepChange}
+        />
+      </div>
     );
   }
 
@@ -182,7 +232,11 @@ export default function VisualizerEngine({ algorithm, onStepChange }) {
   // GRAPH MST
   // ===============================
   if (id === 'prim' || id === 'kruskal') {
-    return <GraphMSTEngine algorithm={algorithm} onStepChange={onStepChange} />;
+    return (
+      <div className="w-full h-full min-h-0 overflow-hidden">
+        <GraphMSTEngine algorithm={algorithm} onStepChange={onStepChange} />
+      </div>
+    );
   }
 
   // ===============================
@@ -190,7 +244,9 @@ export default function VisualizerEngine({ algorithm, onStepChange }) {
   // ===============================
   if (id === 'floyd-warshall') {
     return (
-      <GraphMatrixEngine algorithm={algorithm} onStepChange={onStepChange} />
+      <div className="w-full h-full min-h-0 overflow-hidden">
+        <GraphMatrixEngine algorithm={algorithm} onStepChange={onStepChange} />
+      </div>
     );
   }
 
@@ -204,7 +260,12 @@ export default function VisualizerEngine({ algorithm, onStepChange }) {
     id === 'reverse-array'
   ) {
     return (
-      <RecursionStackEngine algorithm={algorithm} onStepChange={onStepChange} />
+      <div className="w-full h-full min-h-0 overflow-hidden">
+        <RecursionStackEngine
+          algorithm={algorithm}
+          onStepChange={onStepChange}
+        />
+      </div>
     );
   }
 
@@ -218,19 +279,29 @@ export default function VisualizerEngine({ algorithm, onStepChange }) {
     id === 'subset-generation'
   ) {
     return (
-      <BacktrackingEngine algorithm={algorithm} onStepChange={onStepChange} />
+      <div className="w-full h-full min-h-0 overflow-hidden">
+        <BacktrackingEngine algorithm={algorithm} onStepChange={onStepChange} />
+      </div>
     );
   }
 
   if (id === 'sudoku-solver') {
-    return <SudokuEngine algorithm={algorithm} onStepChange={onStepChange} />;
+    return (
+      <div className="w-full h-full min-h-0 overflow-hidden">
+        <SudokuEngine algorithm={algorithm} onStepChange={onStepChange} />
+      </div>
+    );
   }
 
   // ===============================
   // DP
   // ===============================
   if (id === 'climbing-stairs' || id === 'coin-change') {
-    return <DPArrayEngine algorithm={algorithm} onStepChange={onStepChange} />;
+    return (
+      <div className="w-full h-full min-h-0 overflow-hidden">
+        <DPArrayEngine algorithm={algorithm} onStepChange={onStepChange} />
+      </div>
+    );
   }
 
   if (
@@ -238,12 +309,18 @@ export default function VisualizerEngine({ algorithm, onStepChange }) {
     id === 'partition-equal-subset-sum' ||
     id === 'palindrome-partitioning'
   ) {
-    return <DPMatrixEngine algorithm={algorithm} onStepChange={onStepChange} />;
+    return (
+      <div className="w-full h-full min-h-0 overflow-hidden">
+        <DPMatrixEngine algorithm={algorithm} onStepChange={onStepChange} />
+      </div>
+    );
   }
 
   if (id === 'zero-one-knapsack' || id === 'unbounded-knapsack') {
     return (
-      <DPKnapsackEngine algorithm={algorithm} onStepChange={onStepChange} />
+      <div className="w-full h-full min-h-0 overflow-hidden">
+        <DPKnapsackEngine algorithm={algorithm} onStepChange={onStepChange} />
+      </div>
     );
   }
 
@@ -253,23 +330,37 @@ export default function VisualizerEngine({ algorithm, onStepChange }) {
     id === 'matrix-chain-multiplication'
   ) {
     return (
-      <DPSequenceEngine algorithm={algorithm} onStepChange={onStepChange} />
+      <div className="w-full h-full min-h-0 overflow-hidden">
+        <DPSequenceEngine algorithm={algorithm} onStepChange={onStepChange} />
+      </div>
     );
   }
 
   if (id === 'dp-on-trees') {
-    return <DPTreeEngine algorithm={algorithm} onStepChange={onStepChange} />;
+    return (
+      <div className="w-full h-full min-h-0 overflow-hidden">
+        <DPTreeEngine algorithm={algorithm} onStepChange={onStepChange} />
+      </div>
+    );
   }
 
   // ===============================
   // GREEDY
   // ===============================
   if (id === 'fractional-knapsack') {
-    return <GreedyEngine algorithm={algorithm} onStepChange={onStepChange} />;
+    return (
+      <div className="w-full h-full min-h-0 overflow-hidden">
+        <GreedyEngine algorithm={algorithm} onStepChange={onStepChange} />
+      </div>
+    );
   }
 
   // ===============================
   // DEFAULT → ARRAY
   // ===============================
-  return <ArrayEngine algorithm={algorithm} onStepChange={onStepChange} />;
+  return (
+    <div className="w-full h-full min-h-0 overflow-hidden">
+      <ArrayEngine algorithm={algorithm} onStepChange={onStepChange} />
+    </div>
+  );
 }

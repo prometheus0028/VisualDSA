@@ -13,7 +13,16 @@ export default function QuizReview() {
   const [aiFeedback, setAiFeedback] = useState(null);
   const [loadingAI, setLoadingAI] = useState(true);
 
-  // ================= LOAD =================
+  // 🔥 CLEAN FUNCTION (ONLY ADDITION)
+  const cleanMCQText = (text) => {
+    if (!text) return '';
+
+    return text
+      .split('\n')
+      .filter((line) => !line.includes('console.log'))
+      .join('\n');
+  };
+
   useEffect(() => {
     window.scrollTo({ top: 0 });
 
@@ -37,7 +46,7 @@ export default function QuizReview() {
 
   if (!result || !reviewData) {
     return (
-      <div className="pt-40 text-center text-red-500">
+      <div className="pt-32 sm:pt-40 text-center text-red-500">
         No result found. Submit a test first.
       </div>
     );
@@ -45,7 +54,6 @@ export default function QuizReview() {
 
   const { sections, answers } = reviewData;
 
-  // ================= COUNT =================
   const mcqCorrect = sections.mcq.filter(
     (q, i) => answers[`mcq-${i}`] === q.answer,
   ).length;
@@ -61,17 +69,15 @@ export default function QuizReview() {
     );
   }).length;
 
-  // ================= AI RENDER =================
   const renderAI = () => {
     if (!aiFeedback) return null;
 
-    // ✅ STRING fallback
     if (typeof aiFeedback === 'string') {
       return <p className="whitespace-pre-line">{aiFeedback}</p>;
     }
 
     return (
-      <div className="space-y-4 text-gray-700 dark:text-gray-300">
+      <div className="space-y-4 text-gray-700 dark:text-gray-300 text-sm sm:text-base">
         {aiFeedback.feedback && (
           <p className="whitespace-pre-line">{aiFeedback.feedback}</p>
         )}
@@ -134,12 +140,13 @@ export default function QuizReview() {
     );
   };
 
-  // ================= REVIEW =================
   const renderReview = () => (
-    <div className="space-y-8 text-left">
+    <div className="space-y-6 sm:space-y-8 text-left">
       {/* MCQ */}
       <div>
-        <h3 className="text-xl font-semibold mb-4 text-blue-500">MCQ Review</h3>
+        <h3 className="text-lg sm:text-xl font-semibold mb-4 text-blue-500">
+          MCQ Review
+        </h3>
 
         {sections.mcq.map((q, i) => {
           const user = answers[`mcq-${i}`];
@@ -147,11 +154,15 @@ export default function QuizReview() {
           return (
             <div
               key={i}
-              className="mb-4 p-4 rounded-xl bg-white/50 dark:bg-white/5 border"
+              className="mb-4 p-4 sm:p-5 rounded-xl bg-white/50 dark:bg-white/5 border"
             >
-              <p className="font-medium mb-3">
-                Q{i + 1}. {q.question}
-              </p>
+              <div className="mb-3">
+                <p className="font-medium mb-2">Q{i + 1}.</p>
+
+                <div className="whitespace-pre-wrap break-words text-sm sm:text-base text-gray-700 dark:text-gray-300">
+                  {cleanMCQText(q.question)}
+                </div>
+              </div>
 
               {q.options.map((opt, idx) => {
                 const isCorrect = idx === q.answer;
@@ -160,7 +171,7 @@ export default function QuizReview() {
                 return (
                   <div
                     key={idx}
-                    className={`p-2 rounded mb-1
+                    className={`p-2 rounded mb-1 text-sm sm:text-base
                       ${isCorrect ? 'bg-green-500 text-white' : ''}
                       ${isUser && !isCorrect ? 'bg-red-500 text-white' : ''}
                       ${
@@ -174,12 +185,12 @@ export default function QuizReview() {
                 );
               })}
 
-              <div className="mt-3 text-sm">
+              <div className="mt-3 text-xs sm:text-sm">
                 <b>Your Attempt:</b>{' '}
                 {user !== undefined ? q.options[user] : 'Not Attempted'}
               </div>
 
-              <div className="text-sm text-green-600">
+              <div className="text-xs sm:text-sm text-green-600">
                 <b>Correct Answer:</b> {q.options[q.answer]}
               </div>
             </div>
@@ -189,7 +200,7 @@ export default function QuizReview() {
 
       {/* DEBUG */}
       <div>
-        <h3 className="text-xl font-semibold mb-4 text-blue-500">
+        <h3 className="text-lg sm:text-xl font-semibold mb-4 text-blue-500">
           Debug Review
         </h3>
 
@@ -199,19 +210,19 @@ export default function QuizReview() {
           return (
             <div
               key={i}
-              className="mb-6 p-4 rounded-xl bg-white/50 dark:bg-white/5 border"
+              className="mb-6 p-4 sm:p-5 rounded-xl bg-white/50 dark:bg-white/5 border"
             >
-              <p className="font-medium mb-2">
+              <p className="font-medium mb-2 text-sm sm:text-base">
                 Q{i + 1}. {q.problem}
               </p>
 
-              <div className="bg-black text-green-400 p-3 rounded mb-3 font-mono text-sm">
+              <div className="bg-black text-green-400 p-3 rounded mb-3 font-mono text-xs sm:text-sm overflow-x-auto">
                 {q.code.map((line, idx) => (
                   <div key={idx}>{line.replace(/___/g, '____')}</div>
                 ))}
               </div>
 
-              <div>
+              <div className="text-xs sm:text-sm">
                 <b>Your Answers:</b>
                 {q.blanks.map((_, idx) => (
                   <p key={idx}>
@@ -220,7 +231,7 @@ export default function QuizReview() {
                 ))}
               </div>
 
-              <div className="text-green-500 mt-2">
+              <div className="text-green-500 mt-2 text-xs sm:text-sm">
                 <b>Correct Answers:</b>
                 {q.blanks.map((b, idx) => (
                   <p key={idx}>
@@ -237,39 +248,41 @@ export default function QuizReview() {
 
   return (
     <div className="bg-[#f5f1e8] dark:bg-zinc-900 min-h-screen text-black dark:text-white">
-      <section className="pt-44 pb-28 px-6">
+      <section className="pt-32 sm:pt-40 md:pt-44 pb-20 sm:pb-24 md:pb-28 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto text-center">
           <div className="flex justify-start mb-6">
             <button
               onClick={() => navigate('/practice')}
-              className="px-5 py-2 rounded-full bg-blue-500 text-white text-sm"
+              className="px-4 sm:px-5 py-2 rounded-full bg-blue-500 text-white text-xs sm:text-sm"
             >
               ← Back
             </button>
           </div>
 
-          <motion.h1 className="text-5xl font-extrabold mb-6 text-green-500">
+          <motion.h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-6 text-green-500">
             Test Review
           </motion.h1>
 
-          <div className="p-8 rounded-3xl bg-white/50 dark:bg-white/5 border mb-10">
-            <h2 className="text-2xl font-semibold mb-3">Your Score</h2>
+          <div className="p-6 sm:p-8 rounded-3xl bg-white/50 dark:bg-white/5 border mb-10">
+            <h2 className="text-xl sm:text-2xl font-semibold mb-3">
+              Your Score
+            </h2>
 
-            <p className="text-4xl font-bold text-blue-500">
+            <p className="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-500">
               {result.totalScore} / {result.maxScore}
             </p>
 
-            <div className="mt-4 text-sm text-gray-600">
+            <div className="mt-4 text-xs sm:text-sm text-gray-600">
               MCQ Correct: {mcqCorrect} / {sections.mcq.length}
             </div>
 
-            <div className="text-sm text-gray-600">
+            <div className="text-xs sm:text-sm text-gray-600">
               Debug Correct: {debugCorrect} / {sections.debug.length}
             </div>
 
             <button
               onClick={() => setShowReview(!showReview)}
-              className="mt-6 px-6 py-2 bg-black text-white rounded-xl"
+              className="mt-6 px-5 sm:px-6 py-2 bg-black text-white rounded-xl text-xs sm:text-sm"
             >
               {showReview ? 'Hide Answers' : 'Check Your Answers'}
             </button>
@@ -278,24 +291,26 @@ export default function QuizReview() {
           {showReview && renderReview()}
 
           {!showReview && (
-            <div className="p-8 rounded-3xl bg-white/50 dark:bg-white/5 border text-left mb-10">
-              <h3 className="text-xl font-semibold mb-4">🤖 AI Feedback</h3>
+            <div className="p-6 sm:p-8 rounded-3xl bg-white/50 dark:bg-white/5 border text-left mb-10">
+              <h3 className="text-lg sm:text-xl font-semibold mb-4">
+                🤖 AI Feedback
+              </h3>
 
               {loadingAI ? <p>Analyzing your performance...</p> : renderAI()}
             </div>
           )}
 
-          <div className="flex justify-center gap-4">
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
             <button
               onClick={() => navigate('/practice')}
-              className="px-6 py-2 bg-gray-300 dark:bg-white/10 rounded-xl"
+              className="px-5 sm:px-6 py-2 bg-gray-300 dark:bg-white/10 rounded-xl text-sm"
             >
               Try Another Test
             </button>
 
             <button
               onClick={() => navigate('/dashboard')}
-              className="px-6 py-2 bg-blue-500 text-white rounded-xl"
+              className="px-5 sm:px-6 py-2 bg-blue-500 text-white rounded-xl text-sm"
             >
               View Dashboard
             </button>
