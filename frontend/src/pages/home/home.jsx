@@ -1,5 +1,6 @@
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import hero from '../../assets/illustrations/hero.svg';
 import how from '../../assets/illustrations/how.svg';
 import cta from '../../assets/illustrations/cta.svg';
@@ -23,6 +24,8 @@ const fadeUp = {
 
 export default function Home() {
   const navigate = useNavigate();
+  const location = useLocation();
+
   const { scrollY } = useScroll();
 
   const imageY = useSpring(useTransform(scrollY, [0, 500], [0, -120]), {
@@ -34,6 +37,18 @@ export default function Home() {
     stiffness: 80,
     damping: 25,
   });
+
+  // ================= 🔥 FIX: SCROLL AFTER NAVIGATION =================
+  useEffect(() => {
+    if (location.state?.scrollTo) {
+      const id = location.state.scrollTo;
+
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 200);
+    }
+  }, [location]);
 
   const features = [
     {
@@ -194,7 +209,10 @@ export default function Home() {
       </Section>
 
       {/* ================= HOW ================= */}
-      <Section className="bg-gradient-to-r from-gray-200 to-gray-50 dark:from-zinc-800 dark:to-zinc-900">
+      <Section
+        id="how"
+        className="bg-gradient-to-r from-gray-200 to-gray-50 dark:from-zinc-800 dark:to-zinc-900"
+      >
         <Container>
           <motion.div
             initial="hidden"
@@ -249,7 +267,10 @@ export default function Home() {
       </Section>
 
       {/* ================= FAQ ================= */}
-      <Section className="bg-gradient-to-r from-gray-200 to-gray-100 dark:from-zinc-900 dark:to-zinc-800">
+      <Section
+        id="faq"
+        className="bg-gradient-to-r from-gray-200 to-gray-100 dark:from-zinc-900 dark:to-zinc-800"
+      >
         <Container>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-10 sm:mb-14">
             Frequently Asked Questions
