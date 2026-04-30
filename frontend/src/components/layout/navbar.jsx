@@ -147,25 +147,25 @@ export default function Navbar() {
                     <div className="md:hidden flex flex-col">
                       <button
                         onClick={() => scrollToSection('features')}
-                        className="text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-lg"
+                        className="w-full text-left px-3 py-2 rounded-lg text-gray-800 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 transition"
                       >
                         Features
                       </button>
                       <button
                         onClick={() => scrollToSection('how')}
-                        className="text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-lg"
+                        className="w-full text-left px-3 py-2 rounded-lg text-gray-800 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 transition"
                       >
                         How It Works
                       </button>
                       <button
                         onClick={() => scrollToSection('about')}
-                        className="text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-lg"
+                        className="w-full text-left px-3 py-2 rounded-lg text-gray-800 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 transition"
                       >
                         About
                       </button>
                       <button
                         onClick={() => scrollToSection('faq')}
-                        className="text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-lg"
+                        className="w-full text-left px-3 py-2 rounded-lg text-gray-800 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 transition"
                       >
                         FAQ
                       </button>
