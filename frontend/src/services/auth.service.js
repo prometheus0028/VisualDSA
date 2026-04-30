@@ -1,56 +1,56 @@
-import axios from 'axios';
-import { supabase } from './supabase';
+/* eslint-disable no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect } from 'react';
+import Router from './router';
+import { Toaster } from 'react-hot-toast';
+import { supabase } from '../services/supabase';
+import { useAuthStore } from '../store/auth.store';
 
-const API = import.meta.env.VITE_API_URL;
+export default function App() {
+  const initAuth = useAuthStore((state) => state.initAuth);
+  const user = useAuthStore((state) => state.user);
 
-// ================= SIGNUP =================
-export const signup = async (email, password, name) => {
-  const res = await axios.post(`${API}/api/auth/signup`, {
-    email,
-    password,
-    name,
-  });
-  return res.data;
-};
+  // ================= INIT AUTH (ONLY ONCE) =================
+  useEffect(() => {
+    initAuth();
+  }, []);
 
-// ================= LOGIN =================
-export const login = async (email, password) => {
-  const res = await axios.post(`${API}/api/auth/login`, {
-    email,
-    password,
-  });
-  return res.data;
-};
+  // ================= ENSURE PROFILE =================
+  useEffect(() => {
+    if (!user) return;
 
-// ================= GOOGLE LOGIN =================
-export const googleLogin = async () => {
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      // 🔥 FIX: proper redirect handling
-      redirectTo: window.location.origin,
-    },
-  });
+    ensureProfile(user);
+  }, [user]);
 
-  if (error) throw error;
-};
+  const ensureProfile = async (user) => {
+    try {
+      const name =
+        user.user_metadata?.name ||
+        user.user_metadata?.full_name ||
+        user.email?.split('@')[0] ||
+        'User';
 
-// ================= GET SESSION =================
-export const getSession = async () => {
-  const { data } = await supabase.auth.getSession();
-  return data.session;
-};
+      const API = import.meta.env.VITE_API_URL;
 
-// ================= GET USER (🔥 NEW BEST PRACTICE) =================
-export const getUser = async () => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+      await fetch(`${API}/api/user/ensure`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: user.id,
+          name,
+        }),
+      });
 
-  return user;
-};
+      console.log('Profile ensured:', name);
+    } catch (err) {
+      console.error('Profile ensure failed:', err);
+    }
+  };
 
-// ================= LOGOUT =================
-export const logoutUser = async () => {
-  await supabase.auth.signOut();
-};
+  return (
+    <>
+      <Router />
+      <Toaster position="top-right" />
+    </>
+  );
+}

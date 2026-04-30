@@ -11,6 +11,7 @@ export default function AuthModal({ open, onClose }) {
   const [loading, setLoading] = useState(false);
 
   const user = useAuthStore((state) => state.user);
+  const setAuth = useAuthStore((state) => state.setAuth); // 🔥 ADD BACK
 
   useEffect(() => {
     if (open) {
@@ -21,7 +22,7 @@ export default function AuthModal({ open, onClose }) {
     }
   }, [open]);
 
-  // 🔥 AUTO CLOSE WHEN USER LOGS IN (CRITICAL FIX)
+  // AUTO CLOSE WHEN USER LOGS IN
   useEffect(() => {
     if (user && open) {
       onClose();
@@ -34,13 +35,18 @@ export default function AuthModal({ open, onClose }) {
     try {
       setLoading(true);
 
+      let data;
+
       if (mode === 'login') {
-        await login(email, password);
+        data = await login(email, password);
       } else {
-        await signup(email, password, name);
+        data = await signup(email, password, name);
       }
 
-      // ❌ REMOVED setAuth → Supabase listener handles it now
+      // 🔥 CRITICAL FIX
+      if (data?.session) {
+        setAuth(data.session);
+      }
     } catch (err) {
       console.error(err);
       alert(err.response?.data?.error || err.message);
@@ -69,14 +75,8 @@ export default function AuthModal({ open, onClose }) {
         flex flex-col overflow-hidden
       "
       >
-        {/* ================= HEADER ================= */}
-        <div
-          className="
-          relative p-6 sm:p-7
-          bg-gradient-to-r from-blue-600 to-purple-600
-          text-white
-        "
-        >
+        {/* HEADER */}
+        <div className="relative p-6 sm:p-7 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
           <h2 className="text-xl sm:text-2xl font-bold">
             {mode === 'login' ? 'Welcome Back' : 'Create Account'}
           </h2>
@@ -95,21 +95,12 @@ export default function AuthModal({ open, onClose }) {
           </button>
         </div>
 
-        {/* ================= BODY ================= */}
+        {/* BODY */}
         <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-5">
-          {/* GOOGLE BUTTON */}
+          {/* GOOGLE */}
           <button
             onClick={handleGoogle}
-            className="
-              w-full flex items-center justify-center gap-3
-              px-4 py-3
-              rounded-xl
-              bg-white dark:bg-zinc-800
-              border border-gray-300 dark:border-white/10
-              text-sm font-medium
-              shadow-sm hover:shadow-md
-              transition active:scale-[0.98]
-            "
+            className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl bg-white dark:bg-zinc-800 border border-gray-300 dark:border-white/10 text-sm font-medium shadow-sm hover:shadow-md transition active:scale-[0.98]"
           >
             <img
               src="https://www.svgrepo.com/show/475656/google-color.svg"
@@ -133,13 +124,7 @@ export default function AuthModal({ open, onClose }) {
               placeholder="Full name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="
-                w-full px-4 py-3 rounded-xl
-                border border-gray-300 dark:border-white/10
-                bg-white dark:bg-zinc-800
-                text-sm
-                focus:outline-none focus:ring-2 focus:ring-blue-500/40
-              "
+              className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-white/10 bg-white dark:bg-zinc-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40"
             />
           )}
 
@@ -149,13 +134,7 @@ export default function AuthModal({ open, onClose }) {
             placeholder="Email address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="
-              w-full px-4 py-3 rounded-xl
-              border border-gray-300 dark:border-white/10
-              bg-white dark:bg-zinc-800
-              text-sm
-              focus:outline-none focus:ring-2 focus:ring-blue-500/40
-            "
+            className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-white/10 bg-white dark:bg-zinc-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40"
           />
 
           {/* PASSWORD */}
@@ -164,26 +143,14 @@ export default function AuthModal({ open, onClose }) {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="
-              w-full px-4 py-3 rounded-xl
-              border border-gray-300 dark:border-white/10
-              bg-white dark:bg-zinc-800
-              text-sm
-              focus:outline-none focus:ring-2 focus:ring-blue-500/40
-            "
+            className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-white/10 bg-white dark:bg-zinc-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40"
           />
 
           {/* SUBMIT */}
           <button
             onClick={handleSubmit}
             disabled={loading}
-            className="
-              w-full py-3 rounded-xl
-              bg-blue-600 hover:bg-blue-700
-              text-white text-sm font-semibold
-              transition
-              disabled:opacity-50
-            "
+            className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition disabled:opacity-50"
           >
             {loading
               ? 'Processing...'
@@ -192,7 +159,7 @@ export default function AuthModal({ open, onClose }) {
                 : 'Create Account'}
           </button>
 
-          {/* SWITCH MODE */}
+          {/* SWITCH */}
           <p className="text-xs sm:text-sm text-center text-gray-600 dark:text-gray-400">
             {mode === 'login' ? (
               <>

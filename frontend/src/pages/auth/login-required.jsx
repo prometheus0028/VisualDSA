@@ -1,5 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/auth.store';
 
@@ -7,10 +6,10 @@ export default function LoginRequired() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 🔥 ADD loading
   const { user, loading } = useAuthStore();
 
-  const from = location.state?.from || '/';
+  // 🔥 FIX: persist "from" using ref (prevents reset on rerender)
+  const fromRef = useRef(location.state?.from || '/');
 
   // ================= SCROLL TO TOP =================
   useEffect(() => {
@@ -23,9 +22,9 @@ export default function LoginRequired() {
   // ================= AUTO REDIRECT =================
   useEffect(() => {
     if (!loading && user) {
-      navigate(from, { replace: true });
+      navigate(fromRef.current, { replace: true });
     }
-  }, [user, loading]);
+  }, [user, loading, navigate]);
 
   const handleLogin = () => {
     window.dispatchEvent(new Event('open_login_modal'));

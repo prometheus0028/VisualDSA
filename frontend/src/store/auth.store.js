@@ -8,6 +8,7 @@ export const useAuthStore = create((set) => ({
   session: null,
   loading: true,
 
+  // ================= INIT =================
   initAuth: async () => {
     const {
       data: { session },
@@ -32,6 +33,15 @@ export const useAuthStore = create((set) => ({
     }
   },
 
+  // ================= 🔥 MANUAL SET (CRITICAL FIX) =================
+  setAuth: (session) => {
+    set({
+      session,
+      user: session?.user || null,
+    });
+  },
+
+  // ================= LOGOUT =================
   logout: async () => {
     await supabase.auth.signOut();
     set({ user: null, session: null });
