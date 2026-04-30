@@ -28,7 +28,6 @@ export default function Navbar() {
     setDropdownOpen(false);
   };
 
-  // 🔥 FIXED: HASH BASED NAVIGATION (100% RELIABLE)
   const scrollToSection = (id) => {
     setMobileOpen(false);
 
@@ -39,18 +38,6 @@ export default function Navbar() {
       if (el) el.scrollIntoView({ behavior: 'smooth' });
     }
   };
-
-  // 🔥 HANDLE HASH SCROLL (IMPORTANT)
-  useEffect(() => {
-    if (location.hash) {
-      const id = location.hash.replace('#', '');
-
-      setTimeout(() => {
-        const el = document.getElementById(id);
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
-      }, 200);
-    }
-  }, [location]);
 
   useEffect(() => {
     const handleClick = (e) => {
@@ -79,7 +66,7 @@ export default function Navbar() {
     <>
       <div className="fixed top-4 sm:top-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-7xl px-3 sm:px-4 md:px-6">
         <div className="flex items-center justify-between px-4 sm:px-6 md:px-8 py-3 rounded-2xl backdrop-blur-2xl bg-white/60 dark:bg-black/60 border border-white/20 dark:border-white/10 shadow-xl">
-          {/* 🔥 LOGO (BLUE FIX) */}
+          {/* LOGO */}
           <Link
             to="/"
             className="text-sm sm:text-lg md:text-xl font-bold text-blue-500"
@@ -87,21 +74,37 @@ export default function Navbar() {
             VisualDSA
           </Link>
 
-          {/* DESKTOP NAV */}
           <div className="hidden md:flex items-center gap-6 text-sm font-medium">
-            <button onClick={() => scrollToSection('features')}>
+            <button
+              onClick={() => scrollToSection('features')}
+              className="text-black dark:text-white hover:opacity-70"
+            >
               Features
             </button>
-            <button onClick={() => scrollToSection('how')}>How It Works</button>
-            <button onClick={() => scrollToSection('about')}>About</button>
-            <button onClick={() => scrollToSection('faq')}>FAQ</button>
+            <button
+              onClick={() => scrollToSection('how')}
+              className="text-black dark:text-white hover:opacity-70"
+            >
+              How It Works
+            </button>
+            <button
+              onClick={() => scrollToSection('about')}
+              className="text-black dark:text-white hover:opacity-70"
+            >
+              About
+            </button>
+            <button
+              onClick={() => scrollToSection('faq')}
+              className="text-black dark:text-white hover:opacity-70"
+            >
+              FAQ
+            </button>
           </div>
 
-          {/* RIGHT */}
           <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={toggleTheme}
-              className="px-3 py-1.5 rounded-lg bg-green-600 text-white text-xs sm:text-sm"
+              className="px-3 py-1.5 rounded-lg text-xs sm:text-sm bg-black text-white dark:bg-white dark:text-black"
             >
               {theme === 'dark' ? 'Light' : 'Dark'}
             </button>
@@ -124,7 +127,7 @@ export default function Navbar() {
                         navigate('/dashboard');
                         setDropdownOpen(false);
                       }}
-                      className="block w-full text-left py-2"
+                      className="block w-full text-left py-2 text-black dark:text-white"
                     >
                       Dashboard
                     </button>
@@ -141,7 +144,7 @@ export default function Navbar() {
             ) : (
               <button
                 onClick={() => setAuthOpen(true)}
-                className="px-3 sm:px-5 py-1.5 sm:py-2 rounded-lg border text-xs sm:text-sm"
+                className="px-3 sm:px-5 py-1.5 sm:py-2 rounded-lg border text-xs sm:text-sm text-black dark:text-white"
               >
                 Login
               </button>
@@ -162,12 +165,30 @@ export default function Navbar() {
         {/* MOBILE MENU */}
         {mobileOpen && (
           <div className="mt-3 rounded-2xl backdrop-blur-2xl bg-white/80 dark:bg-black/80 border shadow-xl p-5 flex flex-col gap-4 text-sm md:hidden">
-            <button onClick={() => scrollToSection('features')}>
+            <button
+              onClick={() => scrollToSection('features')}
+              className="text-black dark:text-white"
+            >
               Features
             </button>
-            <button onClick={() => scrollToSection('how')}>How It Works</button>
-            <button onClick={() => scrollToSection('about')}>About</button>
-            <button onClick={() => scrollToSection('faq')}>FAQ</button>
+            <button
+              onClick={() => scrollToSection('how')}
+              className="text-black dark:text-white"
+            >
+              How It Works
+            </button>
+            <button
+              onClick={() => scrollToSection('about')}
+              className="text-black dark:text-white"
+            >
+              About
+            </button>
+            <button
+              onClick={() => scrollToSection('faq')}
+              className="text-black dark:text-white"
+            >
+              FAQ
+            </button>
           </div>
         )}
       </div>

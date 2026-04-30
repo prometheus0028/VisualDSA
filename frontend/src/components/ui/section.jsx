@@ -2,6 +2,7 @@ export default function Section({
   children,
   className = '',
   size = 'default', // small | default | large
+  id,
 }) {
   const spacing = {
     small: 'py-10 sm:py-12 md:py-14',
@@ -11,6 +12,7 @@ export default function Section({
 
   return (
     <section
+      id={id}
       className={`
         w-full
         ${spacing[size]}

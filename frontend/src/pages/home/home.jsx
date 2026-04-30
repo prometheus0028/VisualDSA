@@ -1,9 +1,10 @@
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import hero from '../../assets/illustrations/hero.svg';
 import how from '../../assets/illustrations/how.svg';
 import cta from '../../assets/illustrations/cta.svg';
+
 import MagneticButton from '../../components/animations/magnetic-button';
 import FAQAccordion from '../../components/animations/faq-accordion';
 import Container from '../../components/ui/container';
@@ -24,7 +25,6 @@ const fadeUp = {
 
 export default function Home() {
   const navigate = useNavigate();
-  const location = useLocation();
 
   const { scrollY } = useScroll();
 
@@ -37,18 +37,6 @@ export default function Home() {
     stiffness: 80,
     damping: 25,
   });
-
-  // ================= 🔥 FIX: SCROLL AFTER NAVIGATION =================
-  useEffect(() => {
-    if (location.state?.scrollTo) {
-      const id = location.state.scrollTo;
-
-      setTimeout(() => {
-        const el = document.getElementById(id);
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
-      }, 200);
-    }
-  }, [location]);
 
   const features = [
     {

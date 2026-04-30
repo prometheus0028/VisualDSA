@@ -6,6 +6,8 @@ import {
   useLocation,
 } from 'react-router-dom';
 
+import { useEffect } from 'react';
+
 import Navbar from '../components/layout/navbar';
 import Footer from '../components/layout/footer';
 import Home from '../pages/home/home';
@@ -13,27 +15,50 @@ import GetStarted from '../pages/get-started/get-started';
 import Curriculum from '../pages/curriculum/curriculum';
 import AlgorithmPage from '../pages/curriculum/algorithm-page';
 
-// 🔥 DASHBOARD
+//  DASHBOARD
 import Dashboard from '../pages/dashboard/dashboard';
 
-// 🤖 AI TUTOR
+//  AI TUTOR
 import AITutor from '../pages/ai-tutor/ai-tutor';
 
-// 🧠 PRACTICE
+//  PRACTICE
 import PracticeHome from '../pages/practice/practice-home';
 import TopicSelection from '../pages/practice/topic-selection';
-import Quiz from '../pages/practice/quiz'; // ✅ ADD THIS
-import QuizReview from '../pages/practice/quiz-review'; // ✅ ADD THIS (future use)
+import Quiz from '../pages/practice/quiz';
+import QuizReview from '../pages/practice/quiz-review';
 
 // LOGIN REQUIRED
 import LoginRequired from '../pages/auth/login-required';
 
 import { useAuthStore } from '../store/auth.store';
 
-// 🔒 PROTECTED ROUTE
+// =================  HASH SCROLL FIX =================
+function ScrollToHash() {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.replace('#', '');
+
+      //  delay ensures DOM is mounted
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 300);
+    } else {
+      // normal route → scroll top
+      window.scrollTo({ top: 0 });
+    }
+  }, [location]);
+
+  return null;
+}
+
+//  PROTECTED ROUTE
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuthStore();
-
   const location = useLocation();
 
   if (loading) return null;
@@ -54,6 +79,8 @@ function ProtectedRoute({ children }) {
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToHash />
+
       <Navbar />
 
       <Routes>
@@ -88,7 +115,7 @@ export default function App() {
           }
         />
 
-        {/* PRACTICE FLOW */}
+        {/* PRACTICE */}
         <Route
           path="/practice"
           element={
@@ -116,7 +143,6 @@ export default function App() {
           }
         />
 
-        {/* 🔥 REVIEW PAGE (NEXT STEP READY) */}
         <Route
           path="/practice/review"
           element={
