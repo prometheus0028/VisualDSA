@@ -39,7 +39,7 @@ export default function Footer() {
               <ul className="space-y-2 text-sm">
                 <li>
                   <a
-                    href="https://github.com/"
+                    href="https://github.com/prometheus0028"
                     target="_blank"
                     rel="noreferrer"
                     className="flex items-center gap-2 hover:text-white transition"
@@ -58,7 +58,7 @@ export default function Footer() {
 
                 <li>
                   <a
-                    href="https://linkedin.com/"
+                    href="https://www.linkedin.com/in/sarthak-vashisht-27882b3a2/"
                     target="_blank"
                     rel="noreferrer"
                     className="flex items-center gap-2 hover:text-white transition"
