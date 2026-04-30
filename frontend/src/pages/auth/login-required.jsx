@@ -6,7 +6,9 @@ import { useAuthStore } from '../../store/auth.store';
 export default function LoginRequired() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useAuthStore();
+
+  // 🔥 ADD loading
+  const { user, loading } = useAuthStore();
 
   const from = location.state?.from || '/';
 
@@ -20,14 +22,25 @@ export default function LoginRequired() {
 
   // ================= AUTO REDIRECT =================
   useEffect(() => {
-    if (user) {
+    if (!loading && user) {
       navigate(from, { replace: true });
     }
-  }, [user]);
+  }, [user, loading]);
 
   const handleLogin = () => {
     window.dispatchEvent(new Event('open_login_modal'));
   };
+
+  // 🔥 PREVENT FLICKER
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#f5f1e8] dark:bg-zinc-900">
+        <p className="text-gray-500 dark:text-gray-400 text-sm">
+          Checking authentication...
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f5f1e8] dark:bg-zinc-900 px-4 sm:px-6">

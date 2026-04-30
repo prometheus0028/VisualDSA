@@ -1,44 +1,39 @@
 import { create } from 'zustand';
-import { supabase } from '../services/supabase'; // ✅ make sure path is correct
+import { supabase } from '../services/supabase';
+
+let listenerInitialized = false;
 
 export const useAuthStore = create((set) => ({
   user: null,
   session: null,
-  loading: true, // 🔥 NEW
+  loading: true,
 
-  // ================= SET AUTH =================
-  setAuth: (session) =>
+  initAuth: async () => {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     set({
       session,
       user: session?.user || null,
-      loading: false, // 🔥 stop loading once auth is set
-    }),
-
-  // ================= RESTORE SESSION =================
-  initAuth: async () => {
-    const { data } = await supabase.auth.getSession();
-
-    set({
-      session: data.session,
-      user: data.session?.user || null,
       loading: false,
     });
 
-    // 🔥 listen for changes (login/logout)
-    supabase.auth.onAuthStateChange((_event, session) => {
-      set({
-        session,
-        user: session?.user || null,
-        loading: false,
+    // 🔥 prevent duplicate listeners
+    if (!listenerInitialized) {
+      listenerInitialized = true;
+
+      supabase.auth.onAuthStateChange((_event, session) => {
+        set({
+          session,
+          user: session?.user || null,
+        });
       });
-    });
+    }
   },
 
-  // ================= LOGOUT =================
-  logout: () =>
-    set({
-      user: null,
-      session: null,
-      loading: false,
-    }),
+  logout: async () => {
+    await supabase.auth.signOut();
+    set({ user: null, session: null });
+  },
 }));

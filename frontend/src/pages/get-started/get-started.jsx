@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import Lottie from 'lottie-react';
@@ -95,10 +96,20 @@ function SectionLayout({
   reverse,
 }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center w-full">
-      {reverse && image}
+    <div
+      className="
+      grid grid-cols-1 md:grid-cols-2 
+      gap-10 md:gap-16 
+      items-center w-full
+      text-center md:text-left
+    "
+    >
+      {/* 🔥 MOBILE IMAGE FIRST ALWAYS */}
+      <div className="order-1 md:order-none flex justify-center">{image}</div>
 
+      {/* TEXT */}
       <motion.div
+        className="order-2 md:order-none"
         initial={{ opacity: 0, y: 60, scale: 0.95 }}
         whileInView={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.8 }}
@@ -108,7 +119,7 @@ function SectionLayout({
           {title}
         </h2>
 
-        <p className="text-sm sm:text-base text-gray-700 dark:text-gray-400 mb-6 sm:mb-8 leading-relaxed">
+        <p className="text-sm sm:text-base text-gray-700 dark:text-gray-400 mb-6 sm:mb-8 leading-relaxed max-w-md mx-auto md:mx-0">
           {description}
         </p>
 
@@ -126,8 +137,6 @@ function SectionLayout({
           {buttonText}
         </motion.button>
       </motion.div>
-
-      {!reverse && image}
     </div>
   );
 }

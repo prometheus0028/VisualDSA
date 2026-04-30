@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { evaluateQuiz } from '../../data/practice/evaluation-engine';
 import { submitTest } from '../../services/test.service';
 import { useAuthStore } from '../../store/auth.store';
+import { supabase } from '../../services/supabase';
 
 export default function SubmitModal({
   answers,
@@ -142,11 +143,13 @@ export default function SubmitModal({
 
       let user = authUser;
 
+      // ✅ 🔥 FIX: ALWAYS GET REAL SESSION FROM SUPABASE
       if (!user) {
-        const authData = JSON.parse(
-          localStorage.getItem('supabase.auth.token'),
-        );
-        user = authData?.user;
+        const {
+          data: { user: supabaseUser },
+        } = await supabase.auth.getUser();
+
+        user = supabaseUser;
       }
 
       if (user?.id) {
@@ -185,7 +188,6 @@ export default function SubmitModal({
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
-      {/* 🔥 RESPONSIVE MODAL */}
       <div
         className="
         w-full max-w-md
@@ -212,7 +214,6 @@ export default function SubmitModal({
           </p>
         )}
 
-        {/* 🔥 BUTTON STACK FIX */}
         <div className="flex flex-col sm:flex-row justify-end gap-3">
           {!forceSubmit && !submitting && (
             <button

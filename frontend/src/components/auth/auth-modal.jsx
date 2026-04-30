@@ -10,7 +10,7 @@ export default function AuthModal({ open, onClose }) {
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const setAuth = useAuthStore((state) => state.setAuth);
+  const user = useAuthStore((state) => state.user);
 
   useEffect(() => {
     if (open) {
@@ -21,26 +21,26 @@ export default function AuthModal({ open, onClose }) {
     }
   }, [open]);
 
+  // 🔥 AUTO CLOSE WHEN USER LOGS IN (CRITICAL FIX)
+  useEffect(() => {
+    if (user && open) {
+      onClose();
+    }
+  }, [user, open, onClose]);
+
   const handleSubmit = async () => {
     if (loading) return;
 
     try {
       setLoading(true);
 
-      let data;
-
       if (mode === 'login') {
-        data = await login(email, password); // ✅ FIXED
+        await login(email, password);
       } else {
-        data = await signup(email, password, name);
+        await signup(email, password, name);
       }
 
-      if (data?.session) {
-        setAuth(data.session);
-        onClose();
-      } else {
-        alert('No session returned. Check email confirmation settings.');
-      }
+      // ❌ REMOVED setAuth → Supabase listener handles it now
     } catch (err) {
       console.error(err);
       alert(err.response?.data?.error || err.message);
