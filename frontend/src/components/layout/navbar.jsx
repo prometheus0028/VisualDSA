@@ -15,7 +15,7 @@ export default function Navbar() {
 
   const [authOpen, setAuthOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false); // 🔥 NEW
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const dropdownRef = useRef();
 
@@ -28,17 +28,29 @@ export default function Navbar() {
     setDropdownOpen(false);
   };
 
-  // 🔥 FIXED SCROLL NAV
+  // 🔥 FIXED: HASH BASED NAVIGATION (100% RELIABLE)
   const scrollToSection = (id) => {
     setMobileOpen(false);
 
     if (location.pathname !== '/') {
-      navigate('/', { state: { scrollTo: id } });
+      navigate(`/#${id}`);
     } else {
       const el = document.getElementById(id);
       if (el) el.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
+  // 🔥 HANDLE HASH SCROLL (IMPORTANT)
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.replace('#', '');
+
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 200);
+    }
+  }, [location]);
 
   useEffect(() => {
     const handleClick = (e) => {
@@ -67,10 +79,10 @@ export default function Navbar() {
     <>
       <div className="fixed top-4 sm:top-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-7xl px-3 sm:px-4 md:px-6">
         <div className="flex items-center justify-between px-4 sm:px-6 md:px-8 py-3 rounded-2xl backdrop-blur-2xl bg-white/60 dark:bg-black/60 border border-white/20 dark:border-white/10 shadow-xl">
-          {/* LOGO (🔥 FIXED NO GRADIENT) */}
+          {/* 🔥 LOGO (BLUE FIX) */}
           <Link
             to="/"
-            className="text-sm sm:text-lg md:text-xl font-bold text-black dark:text-white"
+            className="text-sm sm:text-lg md:text-xl font-bold text-blue-500"
           >
             VisualDSA
           </Link>
@@ -85,9 +97,8 @@ export default function Navbar() {
             <button onClick={() => scrollToSection('faq')}>FAQ</button>
           </div>
 
-          {/* RIGHT SIDE */}
+          {/* RIGHT */}
           <div className="flex items-center gap-2 sm:gap-3">
-            {/* THEME */}
             <button
               onClick={toggleTheme}
               className="px-3 py-1.5 rounded-lg bg-green-600 text-white text-xs sm:text-sm"
@@ -95,7 +106,6 @@ export default function Navbar() {
               {theme === 'dark' ? 'Light' : 'Dark'}
             </button>
 
-            {/* USER */}
             {user ? (
               <div className="relative" ref={dropdownRef}>
                 <button
@@ -137,7 +147,7 @@ export default function Navbar() {
               </button>
             )}
 
-            {/* 🔥 HAMBURGER */}
+            {/* HAMBURGER */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
               className="md:hidden flex flex-col gap-1 ml-1"
@@ -149,7 +159,7 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* 🔥 MOBILE MENU */}
+        {/* MOBILE MENU */}
         {mobileOpen && (
           <div className="mt-3 rounded-2xl backdrop-blur-2xl bg-white/80 dark:bg-black/80 border shadow-xl p-5 flex flex-col gap-4 text-sm md:hidden">
             <button onClick={() => scrollToSection('features')}>
