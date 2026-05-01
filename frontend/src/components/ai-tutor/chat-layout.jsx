@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react-hooks/set-state-in-effect */
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState, useRef } from 'react';
 import Sidebar from './sidebar';
 import InputBox from './input-box';
@@ -11,7 +10,6 @@ import { useAuthStore } from '../../store/auth.store';
 
 export default function ChatLayout({ chats, refreshChats }) {
   const { user } = useAuthStore();
-
   const [activeChat, setActiveChat] = useState(null);
   const [messages, setMessages] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
@@ -32,11 +30,9 @@ export default function ChatLayout({ chats, refreshChats }) {
 
       setActiveChat(chat);
 
-      // 🔥 FIX 1: REMOVE CHAT TITLE MESSAGE
+      // 🔥 REMOVE TITLE MESSAGE COMPLETELY
       const cleanMessages = (chat.messages || []).filter(
-        (m) =>
-          m.content !== chat.title && // remove title
-          m.role !== 'system', // extra safety
+        (m) => m.content !== chat.title,
       );
 
       setMessages(cleanMessages);
@@ -54,19 +50,64 @@ export default function ChatLayout({ chats, refreshChats }) {
     }
   };
 
-  // ================= NO DEFAULT CHAT =================
+  // ================= DEFAULT NO CHAT =================
   useEffect(() => {
     if (!user) return;
 
     setActiveChat(null);
     setMessages([]);
+
+    const key = `activeChat_${user.id}`;
+    localStorage.removeItem(key);
   }, [user]);
 
   // ================= SELECT CHAT =================
   const handleSelectChat = async (chat) => {
+    const key = `activeChat_${user.id}`;
+    localStorage.setItem(key, chat.id);
     await loadChat(chat.id);
     setSidebarOpen(false);
   };
+
+  // ================= AUTO CREATE CHAT =================
+  const handleAutoCreateChat = async (firstMessage) => {
+    try {
+      const chatName = `New Chat ${chats.length + 1}`;
+
+      const newChat = await createChat(user.id, chatName);
+
+      await refreshChats();
+
+      const key = `activeChat_${user.id}`;
+      localStorage.setItem(key, newChat.id);
+
+      setActiveChat(newChat);
+
+      // 🔥 FIRST MESSAGE = USER MESSAGE ONLY
+      const userMsg = { role: 'user', content: firstMessage };
+      setMessages([userMsg]);
+
+      return newChat;
+    } catch (err) {
+      console.error(err);
+      return null;
+    }
+  };
+
+  // ================= INSTANT DELETE RESET =================
+  useEffect(() => {
+    if (!activeChat) return;
+
+    const exists = chats.some((c) => c.id === activeChat.id);
+
+    if (!exists) {
+      setActiveChat(null);
+      setMessages([]);
+
+      const key = `activeChat_${user?.id}`;
+      localStorage.removeItem(key);
+    }
+  }, [chats]);
 
   // ================= AUTO SCROLL =================
   useEffect(() => {
@@ -76,52 +117,24 @@ export default function ChatLayout({ chats, refreshChats }) {
     }
   }, [messages, isThinking]);
 
-  // ================= CREATE CHAT =================
+  // ================= MANUAL CREATE =================
   const handleCreateChat = async (name) => {
     setModalOpen(false);
 
     const newChat = await createChat(user.id, name);
     await refreshChats();
 
+    const key = `activeChat_${user.id}`;
+    localStorage.setItem(key, newChat.id);
+
     setActiveChat(newChat);
     setMessages([]);
     setSidebarOpen(false);
   };
 
-  // ================= AUTO CREATE CHAT =================
-  const handleAutoCreateChat = async (firstMessage) => {
-    try {
-      const newChatName = `New Chat ${chats.length + 1}`;
-
-      const newChat = await createChat(user.id, newChatName);
-
-      await refreshChats();
-
-      setActiveChat(newChat);
-      setMessages([]);
-
-      return newChat;
-    } catch (err) {
-      console.error(err);
-      return null;
-    }
-  };
-
-  // ================= 🔥 FIX 2: INSTANT DELETE =================
-  const handleDeleteInstant = (chatId) => {
-    if (activeChat?.id === chatId) {
-      // 🔥 instantly reset UI
-      setActiveChat(null);
-      setMessages([]);
-    }
-
-    // 🔥 still refresh in background
-    refreshChats();
-  };
-
   return (
     <div className="flex min-h-screen h-dvh bg-[#f5f1e8] dark:bg-zinc-900 overflow-hidden">
-      {/* ================= SIDEBAR ================= */}
+      {/* SIDEBAR */}
       <div
         className={`
           fixed md:relative z-40
@@ -137,7 +150,6 @@ export default function ChatLayout({ chats, refreshChats }) {
           setActiveChat={handleSelectChat}
           openModal={() => setModalOpen(true)}
           refreshChats={refreshChats}
-          onDeleteChat={handleDeleteInstant} // 🔥 PASS DOWN
         />
       </div>
 
@@ -148,7 +160,7 @@ export default function ChatLayout({ chats, refreshChats }) {
         />
       )}
 
-      {/* ================= MAIN ================= */}
+      {/* MAIN */}
       <div className="flex-1 flex flex-col relative pt-[90px] sm:pt-[100px]">
         {/* CHAT AREA */}
         <div
@@ -160,8 +172,13 @@ export default function ChatLayout({ chats, refreshChats }) {
             {!activeChat && (
               <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
                 <h2 className="text-lg sm:text-2xl font-semibold mb-6">
-                  Hey {firstName}, start a new conversation
+                  Hey {firstName}, ready to dive in?
                 </h2>
+
+                {/* 🔥 TEXT TO START MESSAGE */}
+                <p className="text-sm text-gray-500 mb-4">
+                  Type something to start a new chat
+                </p>
 
                 <div className="w-full max-w-xl">
                   <InputBox
@@ -175,17 +192,8 @@ export default function ChatLayout({ chats, refreshChats }) {
               </div>
             )}
 
-            {/* EMPTY CHAT MESSAGE */}
-            {activeChat && messages.length === 0 && (
-              <div className="text-center text-gray-500 text-sm mt-10">
-                Start typing to begin the conversation...
-              </div>
-            )}
-
             {/* CHAT */}
-            {activeChat && messages.length > 0 && (
-              <MessageList messages={messages} />
-            )}
+            {activeChat && <MessageList messages={messages} />}
 
             {isThinking && activeChat && (
               <div className="text-sm text-gray-500 animate-pulse">
