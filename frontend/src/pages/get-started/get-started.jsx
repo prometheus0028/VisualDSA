@@ -10,7 +10,7 @@ import { useAuthStore } from '../../store/auth.store';
 import Container from '../../components/ui/container';
 
 // 🔥 NEW IMPORT
-import DeviceRestrictionModal from '../../components/ui/device-restriction-modal';
+import DeviceRestrictionModal from '../../components/modals/device-restriction-modal';
 
 export default function GetStarted() {
   const navigate = useNavigate();
