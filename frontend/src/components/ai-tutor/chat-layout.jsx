@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/set-state-in-effect */
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState, useRef } from 'react';
 import Sidebar from './sidebar';
 import MessageBubble from './message-bubble';
@@ -11,13 +11,11 @@ import { useAuthStore } from '../../store/auth.store';
 
 export default function ChatLayout({ chats, refreshChats }) {
   const { user } = useAuthStore();
-
   const [activeChat, setActiveChat] = useState(null);
   const [messages, setMessages] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [isThinking, setIsThinking] = useState(false);
-
-  const [sidebarOpen, setSidebarOpen] = useState(false); // 🔥 MAIN CONTROL
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const chatContainerRef = useRef();
 
@@ -26,7 +24,6 @@ export default function ChatLayout({ chats, refreshChats }) {
 
   const firstName = name.split(' ')[0];
 
-  // ================= LOAD CHAT =================
   const loadChat = async (chatId) => {
     try {
       const chat = await getChatById(chatId);
@@ -52,7 +49,6 @@ export default function ChatLayout({ chats, refreshChats }) {
     }
   };
 
-  // ================= RESTORE CHAT =================
   useEffect(() => {
     if (!user) return;
 
@@ -66,16 +62,29 @@ export default function ChatLayout({ chats, refreshChats }) {
     }
   }, [user]);
 
-  // ================= SELECT CHAT =================
   const handleSelectChat = async (chat) => {
     const key = `activeChat_${user.id}`;
     localStorage.setItem(key, chat.id);
-
     await loadChat(chat.id);
-    setSidebarOpen(false); // 🔥 CLOSE ON MOBILE
+    setSidebarOpen(false);
   };
 
-  // ================= AUTO SCROLL =================
+  // 🔥 NEW: INSTANT RESET WHEN CHAT IS REMOVED
+  useEffect(() => {
+    if (!activeChat) return;
+
+    const exists = chats.some((c) => c.id === activeChat.id);
+
+    if (!exists) {
+      // instantly reset UI
+      setActiveChat(null);
+      setMessages([]);
+
+      const key = `activeChat_${user?.id}`;
+      localStorage.removeItem(key);
+    }
+  }, [chats]);
+
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop =
@@ -83,7 +92,6 @@ export default function ChatLayout({ chats, refreshChats }) {
     }
   }, [messages, isThinking]);
 
-  // ================= CREATE CHAT =================
   const handleCreateChat = async (name) => {
     setModalOpen(false);
 
@@ -99,13 +107,14 @@ export default function ChatLayout({ chats, refreshChats }) {
   };
 
   return (
-    <div className="flex h-dvh bg-[#f5f1e8] dark:bg-zinc-900 overflow-hidden">
-      {/* ================= SIDEBAR ================= */}
+    <div className="flex min-h-screen h-dvh bg-[#f5f1e8] dark:bg-zinc-900 overflow-hidden">
+      {/* SIDEBAR */}
       <div
         className={`
           fixed md:relative z-40
           h-full w-72 max-w-[85vw]
-          transition-transform duration-300 ease-in-out
+          transition-transform duration-300
+          bg-white dark:bg-zinc-900
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
         `}
       >
@@ -115,11 +124,9 @@ export default function ChatLayout({ chats, refreshChats }) {
           setActiveChat={handleSelectChat}
           openModal={() => setModalOpen(true)}
           refreshChats={refreshChats}
-          onCloseSidebar={() => setSidebarOpen(false)} // 🔥 NEW
         />
       </div>
 
-      {/* 🔥 OVERLAY (MOBILE) */}
       {sidebarOpen && (
         <div
           onClick={() => setSidebarOpen(false)}
@@ -127,55 +134,12 @@ export default function ChatLayout({ chats, refreshChats }) {
         />
       )}
 
-      {/* ================= MAIN ================= */}
-      <div className="flex-1 flex flex-col relative">
-        {/* ================= TOP BAR ================= */}
-        <div
-          className="
-            fixed top-[70px] sm:top-[80px] left-0 right-0 z-30
-            md:static md:top-0
-            flex items-center justify-between
-            px-4 py-3
-            bg-white/70 dark:bg-zinc-900/70
-            backdrop-blur-xl
-            border-b border-gray-200 dark:border-white/10
-          "
-        >
-          {/* LEFT */}
-          <div className="flex items-center gap-3">
-            {/* 🔥 HAMBURGER (MOBILE + DESKTOP) */}
-            <button
-              onClick={() => setSidebarOpen((prev) => !prev)}
-              className="
-                w-9 h-9 flex items-center justify-center
-                rounded-lg
-                bg-gray-200 dark:bg-white/10
-                hover:scale-105 transition
-              "
-            >
-              ☰
-            </button>
-
-            {/* TITLE */}
-            <span className="text-sm font-semibold text-gray-600 dark:text-gray-300">
-              {activeChat?.title || 'AI Tutor'}
-            </span>
-          </div>
-
-          {/* RIGHT */}
-          <div className="text-xs text-gray-400">
-            {activeChat ? 'Active Chat' : 'No Chat Selected'}
-          </div>
-        </div>
-
-        {/* ================= CHAT AREA ================= */}
+      {/* MAIN */}
+      <div className="flex-1 flex flex-col relative pt-[90px] sm:pt-[100px]">
+        {/* CHAT AREA */}
         <div
           ref={chatContainerRef}
-          className="
-            flex-1 overflow-y-auto
-            px-3 sm:px-6 py-6
-            pt-[130px] md:pt-6
-          "
+          className="flex-1 overflow-y-auto px-3 sm:px-6 py-6"
         >
           <div className="max-w-3xl mx-auto space-y-6">
             {/* EMPTY STATE */}
@@ -199,7 +163,6 @@ export default function ChatLayout({ chats, refreshChats }) {
             {/* CHAT */}
             {activeChat && <MessageList messages={messages} />}
 
-            {/* THINKING */}
             {isThinking && activeChat && (
               <div className="text-sm text-gray-500 animate-pulse">
                 AI is typing...
@@ -208,7 +171,7 @@ export default function ChatLayout({ chats, refreshChats }) {
           </div>
         </div>
 
-        {/* ================= INPUT ================= */}
+        {/* INPUT */}
         {activeChat && (
           <div className="px-3 sm:px-6 pb-4">
             <div className="max-w-3xl mx-auto">
@@ -223,7 +186,6 @@ export default function ChatLayout({ chats, refreshChats }) {
         )}
       </div>
 
-      {/* ================= MODAL ================= */}
       <ChatModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}

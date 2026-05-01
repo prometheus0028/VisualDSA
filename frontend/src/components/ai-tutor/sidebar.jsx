@@ -6,7 +6,6 @@ export default function ChatSidebar({
   setActiveChat,
   openModal,
   refreshChats,
-  onCloseSidebar, // 🔥 NEW (for mobile close)
 }) {
   const navigate = useNavigate();
 
@@ -47,22 +46,9 @@ export default function ChatSidebar({
 
   return (
     <div className="w-72 max-w-[85vw] h-full flex flex-col bg-white dark:bg-zinc-900 border-r dark:border-white/10">
-      {/* 🔥 MOBILE HEADER (NEW) */}
-      <div className="md:hidden flex items-center justify-between px-4 pt-4 pb-2">
-        <button
-          onClick={onCloseSidebar}
-          className="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-white/10"
-        >
-          ✕
-        </button>
-        <span className="text-sm font-semibold text-gray-500 dark:text-gray-400">
-          Chats
-        </span>
-        <div className="w-8" /> {/* spacer */}
-      </div>
-
       {/* ================= TOP SECTION ================= */}
-      <div className="px-4 pt-2 pb-3 flex flex-col gap-3">
+      <div className="px-4 pt-4 pb-3 flex flex-col gap-3">
+        {/* BACK BUTTON */}
         <button
           onClick={() => navigate('/get-started')}
           className="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-white/10 hover:scale-105 transition"
@@ -70,14 +56,16 @@ export default function ChatSidebar({
           ←
         </button>
 
+        {/* TITLE (UNCHANGED POSITION) */}
         <h2 className="text-2xl font-bold text-green-500 tracking-tight">
           AI Tutor
         </h2>
       </div>
 
+      {/* ================= DIVIDER ================= */}
       <div className="border-t dark:border-white/10 mx-4" />
 
-      {/* NEW CHAT */}
+      {/* ================= NEW CHAT BUTTON ================= */}
       <div className="p-4">
         <button
           onClick={openModal}
@@ -97,15 +85,12 @@ export default function ChatSidebar({
         </button>
       </div>
 
-      {/* CHAT LIST */}
+      {/* ================= CHAT LIST ================= */}
       <div className="flex-1 overflow-y-auto px-3 pb-4 space-y-2">
         {chats.map((chat) => (
           <div
             key={chat.id}
-            onClick={() => {
-              setActiveChat(chat);
-              onCloseSidebar?.(); // 🔥 close on mobile click
-            }}
+            onClick={() => setActiveChat(chat)}
             className={`
               relative px-3 py-2.5 rounded-lg cursor-pointer text-sm
               transition group
@@ -118,6 +103,7 @@ export default function ChatSidebar({
           >
             <p className="truncate">{chat.title || 'New Chat'}</p>
 
+            {/* DELETE ICON */}
             <button
               onClick={(e) => handleDelete(e, chat.id)}
               className="

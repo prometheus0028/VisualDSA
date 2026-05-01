@@ -1,9 +1,6 @@
 import { useState } from 'react';
 import { useAuthStore } from '../../store/auth.store';
-import {
-  sendMessage,
-  sendMessageWithAutoChat, // 🔥 NEW
-} from '../../services/tutor.service';
+import { sendMessage } from '../../services/tutor.service';
 import { trackActivity } from '../../services/activity.service';
 
 export default function InputBox({
@@ -11,7 +8,7 @@ export default function InputBox({
   setMessages,
   setIsThinking,
   refreshChats,
-  setActiveChat, // 🔥 NEW PROP (IMPORTANT)
+  onAutoCreateChat, // 🔥 NEW
 }) {
   const { user } = useAuthStore();
 
@@ -22,38 +19,28 @@ export default function InputBox({
     if (!text.trim() || sending) return;
 
     const messageToSend = text;
-
     setText('');
     setSending(true);
 
-    const userMsg = { role: 'user', content: messageToSend };
-
-    // 🔥 SHOW MESSAGE IMMEDIATELY
-    setMessages((prev) => [...prev, userMsg]);
-    setIsThinking(true);
+    let chat = activeChat;
 
     try {
-      let res;
-
-      // ================= AUTO CHAT MODE =================
-      if (!activeChat) {
-        res = await sendMessageWithAutoChat(null, user.id, messageToSend);
-
-        // 🔥 CREATE CHAT OBJECT FOR UI
-        const newChat = {
-          id: res.chat_id,
-          title: `New Chat`, // backend can overwrite later
-        };
-
-        setActiveChat?.(newChat); // 🔥 IMPORTANT
-      } else {
-        // ================= NORMAL FLOW =================
-        res = await sendMessage(activeChat.id, user.id, messageToSend);
+      // 🔥 AUTO CREATE CHAT IF NONE
+      if (!chat && onAutoCreateChat) {
+        chat = await onAutoCreateChat(messageToSend);
       }
+
+      if (!chat) return;
+
+      const userMsg = { role: 'user', content: messageToSend };
+      setMessages((prev) => [...prev, userMsg]);
+
+      setIsThinking(true);
+
+      const res = await sendMessage(chat.id, user.id, messageToSend);
 
       await trackActivity(user.id, 'ai');
 
-      // 🔥 UPDATE CHAT MESSAGES
       setMessages(res.messages);
 
       await refreshChats();
@@ -95,15 +82,15 @@ export default function InputBox({
         placeholder="Ask anything about DSA..."
       />
 
-      {/* SEND BUTTON (AIRPLANE STYLE 🔥) */}
+      {/* ✈️ AIRPLANE SEND BUTTON */}
       <button
         onClick={handleSend}
         disabled={sending}
         className="
           w-10 h-10 flex items-center justify-center
           rounded-full
-          bg-blue-500 text-white
-          hover:bg-blue-600
+          bg-green-500 text-black
+          hover:bg-green-600
           active:scale-95
           transition
           disabled:opacity-40 disabled:cursor-not-allowed
@@ -114,11 +101,11 @@ export default function InputBox({
         ) : (
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="w-4 h-4 rotate-45" // 🔥 airplane feel
+            className="w-5 h-5 rotate-45"
             fill="currentColor"
             viewBox="0 0 24 24"
           >
-            <path d="M2 21l21-9L2 3v7l15 2-15 2z" />
+            <path d="M2.01 21l20.99-9L2.01 3 2 10l15 2-15 2z" />
           </svg>
         )}
       </button>
