@@ -1,7 +1,7 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useState, useRef } from 'react';
 import Sidebar from './sidebar';
-import MessageBubble from './message-bubble';
 import InputBox from './input-box';
 import ChatModal from './chat-modal';
 import MessageList from './message-list';
@@ -11,6 +11,7 @@ import { useAuthStore } from '../../store/auth.store';
 
 export default function ChatLayout({ chats, refreshChats }) {
   const { user } = useAuthStore();
+
   const [activeChat, setActiveChat] = useState(null);
   const [messages, setMessages] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
@@ -31,8 +32,9 @@ export default function ChatLayout({ chats, refreshChats }) {
 
       setActiveChat(chat);
 
+      // 🔥 FIX: REMOVE TITLE MESSAGE COMPLETELY
       const cleanMessages = (chat.messages || []).filter(
-        (m) => m.content !== chat.title,
+        (m) => m.role !== 'system',
       );
 
       setMessages(cleanMessages);
@@ -50,18 +52,17 @@ export default function ChatLayout({ chats, refreshChats }) {
     }
   };
 
-  // ================= DEFAULT → NO CHAT =================
+  // ================= NO DEFAULT CHAT =================
   useEffect(() => {
     if (!user) return;
 
+    // 🔥 ALWAYS RESET TO EMPTY
     setActiveChat(null);
     setMessages([]);
   }, [user]);
 
   // ================= SELECT CHAT =================
   const handleSelectChat = async (chat) => {
-    const key = `activeChat_${user.id}`;
-    localStorage.setItem(key, chat.id);
     await loadChat(chat.id);
     setSidebarOpen(false);
   };
@@ -74,15 +75,12 @@ export default function ChatLayout({ chats, refreshChats }) {
     }
   }, [messages, isThinking]);
 
-  // ================= CREATE CHAT (MANUAL) =================
+  // ================= MANUAL CREATE =================
   const handleCreateChat = async (name) => {
     setModalOpen(false);
 
     const newChat = await createChat(user.id, name);
     await refreshChats();
-
-    const key = `activeChat_${user.id}`;
-    localStorage.setItem(key, newChat.id);
 
     setActiveChat(newChat);
     setMessages([]);
@@ -98,18 +96,10 @@ export default function ChatLayout({ chats, refreshChats }) {
 
       await refreshChats();
 
-      const key = `activeChat_${user.id}`;
-      localStorage.setItem(key, newChat.id);
-
       setActiveChat(newChat);
 
-      // 🔥 FIRST MESSAGE IMMEDIATELY SHOWN
-      setMessages([
-        {
-          role: 'user',
-          content: firstMessage,
-        },
-      ]);
+      // 🔥 IMPORTANT: no fake message
+      setMessages([]);
 
       return newChat;
     } catch (err) {
@@ -120,7 +110,7 @@ export default function ChatLayout({ chats, refreshChats }) {
 
   return (
     <div className="flex min-h-screen h-dvh bg-[#f5f1e8] dark:bg-zinc-900 overflow-hidden">
-      {/* SIDEBAR */}
+      {/* ================= SIDEBAR ================= */}
       <div
         className={`
           fixed md:relative z-40
@@ -146,19 +136,19 @@ export default function ChatLayout({ chats, refreshChats }) {
         />
       )}
 
-      {/* MAIN */}
+      {/* ================= MAIN ================= */}
       <div className="flex-1 flex flex-col relative pt-[90px] sm:pt-[100px]">
-        {/* CHAT AREA */}
+        {/* ================= CHAT AREA ================= */}
         <div
           ref={chatContainerRef}
           className="flex-1 overflow-y-auto px-3 sm:px-6 py-6"
         >
           <div className="max-w-3xl mx-auto space-y-6">
-            {/* EMPTY STATE */}
+            {/* ================= EMPTY STATE ================= */}
             {!activeChat && (
               <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
                 <h2 className="text-lg sm:text-2xl font-semibold mb-6">
-                  Hey {firstName}, ready to dive in?
+                  Hey {firstName}, start a new conversation
                 </h2>
 
                 <div className="w-full max-w-xl">
@@ -173,8 +163,16 @@ export default function ChatLayout({ chats, refreshChats }) {
               </div>
             )}
 
-            {/* CHAT */}
-            {activeChat && <MessageList messages={messages} />}
+            {/* ================= CHAT ================= */}
+            {activeChat && messages.length === 0 && (
+              <div className="text-center text-gray-500 text-sm mt-10">
+                Start typing to begin the conversation...
+              </div>
+            )}
+
+            {activeChat && messages.length > 0 && (
+              <MessageList messages={messages} />
+            )}
 
             {isThinking && activeChat && (
               <div className="text-sm text-gray-500 animate-pulse">
@@ -184,7 +182,7 @@ export default function ChatLayout({ chats, refreshChats }) {
           </div>
         </div>
 
-        {/* INPUT */}
+        {/* ================= INPUT ================= */}
         {activeChat && (
           <div className="px-3 sm:px-6 pb-4">
             <div className="max-w-3xl mx-auto">
@@ -193,7 +191,7 @@ export default function ChatLayout({ chats, refreshChats }) {
                 setMessages={setMessages}
                 setIsThinking={setIsThinking}
                 refreshChats={refreshChats}
-                onAutoCreateChat={handleAutoCreateChat} // 🔥 ALSO HERE
+                onAutoCreateChat={handleAutoCreateChat} // 🔥 IMPORTANT
               />
             </div>
           </div>
