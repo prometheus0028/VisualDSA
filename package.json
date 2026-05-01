@@ -1,22 +1,21 @@
 {
   "name": "visualdsa",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "directories": {
-    "doc": "docs"
-  },
+  "private": true,
+  "description": "VisualDSA monorepo",
+  "workspaces": [
+    "frontend",
+    "backend",
+    "ai-engine"
+  ],
   "scripts": {
-    "dev": "concurrently \"npm run dev --workspace=frontend\" \"npm run dev --workspace=backend\" \"npm run dev --workspace=ai-engine\""
+    "dev": "concurrently \"npm run dev --workspace=frontend\" \"npm run dev --workspace=backend\" \"npm run dev --workspace=ai-engine\"",
+    "build": "npm run build --workspace=frontend"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
   "devDependencies": {
     "concurrently": "^9.2.1"
-  },
-  "dependencies": {
-    "mongodb": "^7.1.1"
   }
 }
