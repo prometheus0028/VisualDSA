@@ -90,7 +90,7 @@ export default function InputBox({
           w-10 h-10 flex items-center justify-center
           rounded-full
           bg-grey-600 text-black
-          hover:bg-grey-800
+          hover:bg-grey-800 dark:text-white
           active:scale-95
           transition
           disabled:opacity-40 disabled:cursor-not-allowed
