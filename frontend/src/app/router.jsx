@@ -15,13 +15,13 @@ import GetStarted from '../pages/get-started/get-started';
 import Curriculum from '../pages/curriculum/curriculum';
 import AlgorithmPage from '../pages/curriculum/algorithm-page';
 
-//  DASHBOARD
+// DASHBOARD
 import Dashboard from '../pages/dashboard/dashboard';
 
-//  AI TUTOR
+// AI TUTOR
 import AITutor from '../pages/ai-tutor/ai-tutor';
 
-//  PRACTICE
+// PRACTICE
 import PracticeHome from '../pages/practice/practice-home';
 import TopicSelection from '../pages/practice/topic-selection';
 import Quiz from '../pages/practice/quiz';
@@ -32,7 +32,7 @@ import LoginRequired from '../pages/auth/login-required';
 
 import { useAuthStore } from '../store/auth.store';
 
-// =================  HASH SCROLL FIX =================
+// ================= HASH SCROLL=================
 function ScrollToHash() {
   const location = useLocation();
 
@@ -40,15 +40,11 @@ function ScrollToHash() {
     if (location.hash) {
       const id = location.hash.replace('#', '');
 
-      //  delay ensures DOM is mounted
       setTimeout(() => {
         const el = document.getElementById(id);
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth' });
-        }
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
       }, 300);
     } else {
-      // normal route → scroll top
       window.scrollTo({ top: 0 });
     }
   }, [location]);
@@ -56,7 +52,7 @@ function ScrollToHash() {
   return null;
 }
 
-//  PROTECTED ROUTE
+// ================= AUTH PROTECTION =================
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuthStore();
   const location = useLocation();
@@ -76,6 +72,18 @@ function ProtectedRoute({ children }) {
   return children;
 }
 
+// =================  DEVICE PROTECTION =================
+function DeviceProtectedRoute({ children }) {
+  const isMobileOrTablet = window.innerWidth < 1024;
+
+  if (isMobileOrTablet) {
+    return <Navigate to="/practice" replace />;
+  }
+
+  return children;
+}
+
+// ================= APP =================
 export default function App() {
   return (
     <BrowserRouter>
@@ -134,11 +142,14 @@ export default function App() {
           }
         />
 
+        {/* QUIZ LOCKED TO LAPTOP */}
         <Route
           path="/practice/quiz"
           element={
             <ProtectedRoute>
-              <Quiz />
+              <DeviceProtectedRoute>
+                <Quiz />
+              </DeviceProtectedRoute>
             </ProtectedRoute>
           }
         />

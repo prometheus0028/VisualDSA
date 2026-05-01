@@ -1,3 +1,4 @@
+/* eslint-disable no-empty */
 /* eslint-disable react-hooks/immutability */
 /* eslint-disable no-unused-vars */
 import { useEffect, useState, useRef } from 'react';
@@ -16,7 +17,7 @@ export default function QuizLayout({ topic }) {
 
   const savedState = JSON.parse(localStorage.getItem('quiz_state') || '{}');
 
-  // ================= FORCE FULL RESET EVERY TIME =================
+  // ================= FORCE FULL RESET =================
   useEffect(() => {
     localStorage.removeItem('quiz_state');
     localStorage.removeItem('quiz_start');
@@ -38,7 +39,6 @@ export default function QuizLayout({ topic }) {
 
   useEffect(() => {
     const { mcq, debug } = loadQuestions(topic);
-
     const data = { mcq, debug };
 
     localStorage.setItem('quiz_questions', JSON.stringify(data));
@@ -46,7 +46,6 @@ export default function QuizLayout({ topic }) {
   }, [topic]);
 
   const sectionKeys = ['mcq', 'debug'];
-
   const [currentSection, setCurrentSection] = useState('mcq');
 
   const [sectionIndex, setSectionIndex] = useState({
@@ -61,12 +60,10 @@ export default function QuizLayout({ topic }) {
   const [showSubmit, setShowSubmit] = useState(false);
 
   const [warnings, setWarnings] = useState(0);
-
   const [warningMsg, setWarningMsg] = useState('');
   const [showWarning, setShowWarning] = useState(false);
 
   const [quizEnded, setQuizEnded] = useState(false);
-
   const [endReason, setEndReason] = useState('');
 
   const totalQuestions = sections[currentSection]?.length || 0;
@@ -108,9 +105,23 @@ export default function QuizLayout({ topic }) {
 
   // ================= FULLSCREEN =================
   useEffect(() => {
-    if (quizRef.current) {
-      quizRef.current.requestFullscreen().catch(() => {});
-    }
+    const enterFullscreen = async () => {
+      try {
+        if (quizRef.current && !document.fullscreenElement) {
+          await quizRef.current.requestFullscreen();
+        }
+      } catch {}
+    };
+
+    enterFullscreen();
+    setTimeout(enterFullscreen, 300);
+
+    const forceInteraction = () => {
+      enterFullscreen();
+      window.removeEventListener('pointerdown', forceInteraction);
+    };
+
+    window.addEventListener('pointerdown', forceInteraction);
 
     const handleFullscreenChange = () => {
       if (!document.fullscreenElement) {
@@ -120,22 +131,63 @@ export default function QuizLayout({ topic }) {
 
     document.addEventListener('fullscreenchange', handleFullscreenChange);
 
-    return () =>
+    return () => {
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      window.removeEventListener('pointerdown', forceInteraction);
+    };
   }, []);
 
-  // ================= TAB SWITCH =================
+  // ================= 🔥 ANTI-CHEAT =================
   useEffect(() => {
+    const handleRightClick = (e) => {
+      e.preventDefault();
+      triggerWarning('Right-click is disabled');
+    };
+
+    const handleKeyDown = (e) => {
+      if (
+        e.ctrlKey &&
+        ['c', 'v', 'x', 'u', 's', 'p'].includes(e.key.toLowerCase())
+      ) {
+        e.preventDefault();
+        triggerWarning('Restricted keyboard shortcut');
+      }
+
+      if (
+        e.key === 'F12' ||
+        (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key))
+      ) {
+        e.preventDefault();
+        triggerWarning('Developer tools blocked');
+      }
+
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        triggerWarning('Escape key disabled');
+      }
+    };
+
+    const handleBlur = () => {
+      triggerWarning('Window focus lost');
+    };
+
     const handleVisibility = () => {
       if (document.hidden) {
         triggerWarning('Tab switch detected');
       }
     };
 
+    document.addEventListener('contextmenu', handleRightClick);
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('blur', handleBlur);
     document.addEventListener('visibilitychange', handleVisibility);
 
-    return () =>
+    return () => {
+      document.removeEventListener('contextmenu', handleRightClick);
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('blur', handleBlur);
       document.removeEventListener('visibilitychange', handleVisibility);
+    };
   }, []);
 
   const reEnterFullscreen = () => {
@@ -221,24 +273,9 @@ export default function QuizLayout({ topic }) {
   const handleTimeUp = () => {
     setEndReason('timeout');
     setQuizEnded(true);
-
     setWarningMsg('Time is up!');
     setShowSubmit(true);
   };
-
-  useEffect(() => {
-    const handleFirstInteraction = () => {
-      if (quizRef.current && !document.fullscreenElement) {
-        quizRef.current.requestFullscreen().catch(() => {});
-      }
-
-      window.removeEventListener('click', handleFirstInteraction);
-    };
-
-    window.addEventListener('click', handleFirstInteraction);
-
-    return () => window.removeEventListener('click', handleFirstInteraction);
-  }, []);
 
   if (!sections.mcq.length && !sections.debug.length) {
     return (
@@ -253,9 +290,7 @@ export default function QuizLayout({ topic }) {
       ref={quizRef}
       className="bg-[#f5f1e8] dark:bg-zinc-900 min-h-screen overflow-x-hidden text-black dark:text-white"
     >
-      {/* 🔥 RESPONSIVE CONTAINER */}
       <div className="pt-28 sm:pt-32 px-3 sm:px-5 md:px-6 max-w-7xl mx-auto">
-        {/* 🔥 HEADER STACK FIX */}
         <div className="flex flex-col sm:flex-row gap-4 sm:gap-0 justify-between items-center mb-6 sm:mb-8">
           <SectionTabs
             current={currentSection}
@@ -264,9 +299,7 @@ export default function QuizLayout({ topic }) {
           <Timer duration={remainingTime} onTimeUp={handleTimeUp} />
         </div>
 
-        {/* 🔥 GRID FIX */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8">
-          {/* NAV */}
           <div className="order-2 md:order-1">
             <Navigation
               total={totalQuestions}
@@ -278,7 +311,6 @@ export default function QuizLayout({ topic }) {
             />
           </div>
 
-          {/* QUESTION */}
           <div className="order-1 md:order-2 md:col-span-3">
             <QuestionCard
               section={currentSection}
@@ -300,7 +332,6 @@ export default function QuizLayout({ topic }) {
               }}
             />
 
-            {/* 🔥 BUTTONS FIX */}
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-0 justify-between mt-6">
               <button
                 onClick={prevQuestion}
@@ -315,7 +346,7 @@ export default function QuizLayout({ topic }) {
                 disabled={quizEnded}
                 className="px-6 py-2 rounded-full bg-black text-white dark:bg-white dark:text-black"
               >
-                Next
+                {currentIndex === totalQuestions - 1 ? 'Submit' : 'Next'}
               </button>
             </div>
           </div>

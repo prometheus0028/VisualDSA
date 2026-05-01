@@ -1,7 +1,9 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useNavigate } from 'react-router-dom';
 import { curriculumData } from '../../data/curriculum-data';
 import { motion } from 'framer-motion';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import DeviceRestrictionModal from '../../components/modals/device-restriction-modal';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 60 },
@@ -19,11 +21,28 @@ const fadeUp = {
 export default function TopicSelection() {
   const navigate = useNavigate();
 
+  const [showModal, setShowModal] = useState(false);
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
+
+    // 🔥 BLOCK ON PAGE LOAD
+    if (window.innerWidth < 1024) {
+      setShowModal(true);
+    }
   }, []);
 
+  // 🔥 DEVICE CHECK
+  const isMobileOrTablet = () => {
+    return window.innerWidth < 1024;
+  };
+
   const handleSelect = (topic) => {
+    if (isMobileOrTablet()) {
+      setShowModal(true);
+      return;
+    }
+
     navigate('/practice/quiz', { state: { topic } });
   };
 
@@ -96,6 +115,16 @@ export default function TopicSelection() {
           </div>
         </div>
       </section>
+
+      {/* 🔥 REUSABLE MODAL */}
+      <DeviceRestrictionModal
+        open={showModal}
+        onClose={() => {
+          setShowModal(false);
+          navigate('/practice');
+        }}
+        message="Tests are only available on laptop or desktop devices to ensure a proper exam environment, fullscreen enforcement, and fair evaluation. Kindly switch to a laptop to continue."
+      />
     </div>
   );
 }

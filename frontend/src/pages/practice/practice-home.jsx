@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import DeviceRestrictionModal from '../../components/modals/device-restriction-modal';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 60 },
@@ -18,9 +19,25 @@ const fadeUp = {
 export default function PracticeHome() {
   const navigate = useNavigate();
 
+  const [showModal, setShowModal] = useState(false);
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
+
+  // 🔥 DEVICE DETECTION (mobile + tablet)
+  const isMobileOrTablet = () => {
+    return window.innerWidth < 1024; // < laptop
+  };
+
+  const handleStart = () => {
+    if (isMobileOrTablet()) {
+      setShowModal(true);
+      return;
+    }
+
+    navigate('/practice/select');
+  };
 
   const features = [
     {
@@ -120,13 +137,20 @@ export default function PracticeHome() {
             animate="visible"
             variants={fadeUp}
             custom={3}
-            onClick={() => navigate('/practice/select')}
+            onClick={handleStart}
             className="px-6 sm:px-8 md:px-10 py-2.5 sm:py-3 rounded-full bg-blue-400 text-white dark:bg-blue-500 dark:text-black text-xs sm:text-sm font-semibold hover:scale-105 transition"
           >
             Select Topic
           </motion.button>
         </div>
       </section>
+
+      {/* 🔥 REUSABLE MODAL */}
+      <DeviceRestrictionModal
+        open={showModal}
+        onClose={() => setShowModal(false)}
+        message="Tests can only be attempted on laptop or desktop devices for the best experience, and fair evaluation. Kindly switch to a desktop device to continue."
+      />
     </div>
   );
 }
