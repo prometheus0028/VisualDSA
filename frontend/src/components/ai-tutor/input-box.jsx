@@ -82,7 +82,7 @@ export default function InputBox({
         placeholder="Ask anything about DSA..."
       />
 
-      {/* ✈️ AIRPLANE SEND BUTTON */}
+      {/* ✈️ FIXED HORIZONTAL SEND BUTTON */}
       <button
         onClick={handleSend}
         disabled={sending}
@@ -101,11 +101,12 @@ export default function InputBox({
         ) : (
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="w-5 h-5 rotate-45"
+            className="w-5 h-5"
             fill="currentColor"
             viewBox="0 0 24 24"
           >
-            <path d="M2.01 21l20.99-9L2.01 3 2 10l15 2-15 2z" />
+            {/* ✈️ cleaner horizontal airplane */}
+            <path d="M2 12l19-9-5 9 5 9-19-9zm3 0h11" />
           </svg>
         )}
       </button>

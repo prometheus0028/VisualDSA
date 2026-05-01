@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useState, useRef } from 'react';
 import Sidebar from './sidebar';
 import MessageBubble from './message-bubble';
@@ -24,6 +24,7 @@ export default function ChatLayout({ chats, refreshChats }) {
 
   const firstName = name.split(' ')[0];
 
+  // ================= LOAD CHAT =================
   const loadChat = async (chatId) => {
     try {
       const chat = await getChatById(chatId);
@@ -49,19 +50,15 @@ export default function ChatLayout({ chats, refreshChats }) {
     }
   };
 
+  // ================= DEFAULT → NO CHAT =================
   useEffect(() => {
     if (!user) return;
 
-    const key = `activeChat_${user.id}`;
-    const saved = localStorage.getItem(key);
-
-    if (saved) loadChat(saved);
-    else {
-      setActiveChat(null);
-      setMessages([]);
-    }
+    setActiveChat(null);
+    setMessages([]);
   }, [user]);
 
+  // ================= SELECT CHAT =================
   const handleSelectChat = async (chat) => {
     const key = `activeChat_${user.id}`;
     localStorage.setItem(key, chat.id);
@@ -69,22 +66,7 @@ export default function ChatLayout({ chats, refreshChats }) {
     setSidebarOpen(false);
   };
 
-  // 🔥 NEW: INSTANT RESET WHEN CHAT IS REMOVED
-  useEffect(() => {
-    if (!activeChat) return;
-
-    const exists = chats.some((c) => c.id === activeChat.id);
-
-    if (!exists) {
-      // instantly reset UI
-      setActiveChat(null);
-      setMessages([]);
-
-      const key = `activeChat_${user?.id}`;
-      localStorage.removeItem(key);
-    }
-  }, [chats]);
-
+  // ================= AUTO SCROLL =================
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop =
@@ -92,6 +74,7 @@ export default function ChatLayout({ chats, refreshChats }) {
     }
   }, [messages, isThinking]);
 
+  // ================= CREATE CHAT (MANUAL) =================
   const handleCreateChat = async (name) => {
     setModalOpen(false);
 
@@ -104,6 +87,35 @@ export default function ChatLayout({ chats, refreshChats }) {
     setActiveChat(newChat);
     setMessages([]);
     setSidebarOpen(false);
+  };
+
+  // ================= 🔥 AUTO CREATE CHAT =================
+  const handleAutoCreateChat = async (firstMessage) => {
+    try {
+      const newChatName = `New Chat ${chats.length + 1}`;
+
+      const newChat = await createChat(user.id, newChatName);
+
+      await refreshChats();
+
+      const key = `activeChat_${user.id}`;
+      localStorage.setItem(key, newChat.id);
+
+      setActiveChat(newChat);
+
+      // 🔥 FIRST MESSAGE IMMEDIATELY SHOWN
+      setMessages([
+        {
+          role: 'user',
+          content: firstMessage,
+        },
+      ]);
+
+      return newChat;
+    } catch (err) {
+      console.error(err);
+      return null;
+    }
   };
 
   return (
@@ -155,6 +167,7 @@ export default function ChatLayout({ chats, refreshChats }) {
                     setMessages={setMessages}
                     setIsThinking={setIsThinking}
                     refreshChats={refreshChats}
+                    onAutoCreateChat={handleAutoCreateChat} // 🔥 FIX
                   />
                 </div>
               </div>
@@ -180,6 +193,7 @@ export default function ChatLayout({ chats, refreshChats }) {
                 setMessages={setMessages}
                 setIsThinking={setIsThinking}
                 refreshChats={refreshChats}
+                onAutoCreateChat={handleAutoCreateChat} // 🔥 ALSO HERE
               />
             </div>
           </div>
