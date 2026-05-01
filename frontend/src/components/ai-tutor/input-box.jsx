@@ -106,7 +106,9 @@ export default function InputBox({
             viewBox="0 0 24 24"
           >
             {/* ✈️ cleaner horizontal airplane */}
-            <path d="M2 12l19-9-5 9 5 9-19-9zm3 0h11" />
+            <g transform="rotate(180 12 12)">
+              <path d="M2 12l19-9-5 9 5 9-19-9zm3 0h11" />
+            </g>
           </svg>
         )}
       </button>
