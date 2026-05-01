@@ -89,8 +89,8 @@ export default function InputBox({
         className="
           w-10 h-10 flex items-center justify-center
           rounded-full
-          bg-green-500 text-black
-          hover:bg-green-600
+          bg-blue-500 text-black
+          hover:bg-blue-600
           active:scale-95
           transition
           disabled:opacity-40 disabled:cursor-not-allowed
