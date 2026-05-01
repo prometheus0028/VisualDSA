@@ -6,7 +6,7 @@ import {
   useLocation,
 } from 'react-router-dom';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import Navbar from '../components/layout/navbar';
 import Footer from '../components/layout/footer';
@@ -32,7 +32,7 @@ import LoginRequired from '../pages/auth/login-required';
 
 import { useAuthStore } from '../store/auth.store';
 
-// ================= HASH SCROLL=================
+// ================= HASH SCROLL =================
 function ScrollToHash() {
   const location = useLocation();
 
@@ -50,6 +50,24 @@ function ScrollToHash() {
   }, [location]);
 
   return null;
+}
+
+// ================= DEVICE CHECK HOOK =================
+function useDeviceCheck() {
+  const [isMobileOrTablet, setIsMobileOrTablet] = useState(
+    window.innerWidth < 1024,
+  );
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobileOrTablet(window.innerWidth < 1024);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return isMobileOrTablet;
 }
 
 // ================= AUTH PROTECTION =================
@@ -72,12 +90,23 @@ function ProtectedRoute({ children }) {
   return children;
 }
 
-// =================  DEVICE PROTECTION =================
+// ================= DEVICE PROTECTION (QUIZ) =================
 function DeviceProtectedRoute({ children }) {
-  const isMobileOrTablet = window.innerWidth < 1024;
+  const isMobileOrTablet = useDeviceCheck();
 
   if (isMobileOrTablet) {
     return <Navigate to="/practice" replace />;
+  }
+
+  return children;
+}
+
+// ================= AI TUTOR DEVICE BLOCK =================
+function AITutorProtectedRoute({ children }) {
+  const isMobileOrTablet = useDeviceCheck();
+
+  if (isMobileOrTablet) {
+    return <Navigate to="/get-started" state={{ restricted: 'ai' }} replace />;
   }
 
   return children;
@@ -113,12 +142,14 @@ export default function App() {
           }
         />
 
-        {/* AI TUTOR */}
+        {/* AI TUTOR (LOCKED ON MOBILE) */}
         <Route
           path="/ai-tutor"
           element={
             <ProtectedRoute>
-              <AITutor />
+              <AITutorProtectedRoute>
+                <AITutor />
+              </AITutorProtectedRoute>
             </ProtectedRoute>
           }
         />

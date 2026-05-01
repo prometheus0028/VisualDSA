@@ -1,6 +1,7 @@
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import Lottie from 'lottie-react';
+import { useState } from 'react';
 
 import curriculumSvg from '../../assets/illustrations/curriculum.svg';
 import practiceSvg from '../../assets/illustrations/practice.svg';
@@ -8,9 +9,14 @@ import aiAnimation from '../../assets/animations/ai.json';
 import { useAuthStore } from '../../store/auth.store';
 import Container from '../../components/ui/container';
 
+// 🔥 NEW IMPORT
+import DeviceRestrictionModal from '../../components/ui/device-restriction-modal';
+
 export default function GetStarted() {
   const navigate = useNavigate();
   const { user } = useAuthStore();
+
+  const [showModal, setShowModal] = useState(false);
 
   const { scrollYProgress } = useScroll();
 
@@ -19,6 +25,12 @@ export default function GetStarted() {
     { stiffness: 40, damping: 20 },
   );
 
+  // 🔥 DEVICE CHECK
+  const isMobileOrTablet = () => {
+    return window.innerWidth < 1024;
+  };
+
+  // 🔥 PROTECTED NAV
   const handleProtectedNav = (path) => {
     if (!user) {
       navigate('/login-required', {
@@ -26,6 +38,13 @@ export default function GetStarted() {
       });
       return;
     }
+
+    // 🔥 BLOCK AI TUTOR ONLY
+    if (path === '/ai-tutor' && isMobileOrTablet()) {
+      setShowModal(true);
+      return;
+    }
+
     navigate(path);
   };
 
@@ -80,6 +99,13 @@ export default function GetStarted() {
           />
         </Container>
       </section>
+
+      {/* 🔥 REUSABLE MODAL */}
+      <DeviceRestrictionModal
+        open={showModal}
+        onClose={() => setShowModal(false)}
+        message="The AI Tutor is designed for a full desktop experience to ensure optimal usability, better interaction, and accurate feedback. Kindly access this feature using a laptop or desktop device."
+      />
     </div>
   );
 }
@@ -103,7 +129,6 @@ function SectionLayout({
       text-center md:text-left
     "
     >
-      {/* ================= IMAGE ================= */}
       <div
         className={`
           flex justify-center
@@ -114,7 +139,6 @@ function SectionLayout({
         {image}
       </div>
 
-      {/* ================= TEXT ================= */}
       <motion.div
         className={`
           order-2
