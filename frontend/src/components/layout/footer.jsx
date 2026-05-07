@@ -58,7 +58,7 @@ export default function Footer() {
 
                 <li>
                   <a
-                    href="https://www.linkedin.com/in/sarthak-vashisht-27882b3a2/"
+                    href="https://www.linkedin.com/in/sarthakvashisht2005/"
                     target="_blank"
                     rel="noreferrer"
                     className="flex items-center gap-2 hover:text-white transition"
